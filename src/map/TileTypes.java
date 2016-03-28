@@ -29,11 +29,13 @@ public class TileTypes {
 	public static Color testTileSet(int id) {
 		switch(id) {
 			case 0:
-				return new Color(166,166,166);
+				return new Color(196,196,196);
 			case 1:
-				return new Color(102,102,102);
+				return new Color(152,152,152);
 			case 2:
 				return new Color(0,0,255);
+			case 3:
+				return new Color(0,125,0);
 			default:
 				return new Color(255,255,255);
 		}

@@ -6,30 +6,23 @@ import map.RegionMap;
 public class Encounter implements Event {
 
 	private String destination;
-	private int destIndexY;
-	private int destIndexX;
-	
-	public Encounter(String destination, int destIndexY, int destIndexX) {
+	private boolean active;
+
+	public Encounter(String destination) {
 		this.destination = destination;
-		this.destIndexY = destIndexY;
-		this.destIndexX = destIndexX;
+		this.active = true;
 	}
 	
 	@Override
 	public void execute(GamePanel panel) {
-		RegionMap map = (RegionMap) panel;
-		map.takeEncounter(this);
+		if (active) {
+			RegionMap map = (RegionMap) panel;
+			map.takeEncounter(this);
+//			active = false;
+		}
 	}
 	
 	public String getDestination() {
 		return destination;
-	}
-	
-	public int getDestIndexY() {
-		return destIndexY;
-	}
-	
-	public int getDestIndexX() {
-		return destIndexX;
 	}
 }

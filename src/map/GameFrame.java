@@ -2,15 +2,27 @@ package map;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
-public class GameFrame extends JLayeredPane implements KeyListener {
+public class GameFrame extends JLayeredPane implements KeyListener{
 
 	GamePanel gamePanel;
-	
+	KeyEvent e;
+	ExecutorService es = Executors.newSingleThreadExecutor();
+	Runnable runnable = new Runnable() {
+
+		@Override
+		public void run() {
+			gamePanel.keyPressed(e);
+		}
+	};
+
 //	public void init() {
 //        initKeyListeners();
 //	}
@@ -52,7 +64,9 @@ public class GameFrame extends JLayeredPane implements KeyListener {
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
-		gamePanel.keyPressed(e);		
+		this.e = e;
+		es.execute(runnable);
+//		gamePanel.keyPressed(e);		
 	}
 
 	@Override
@@ -60,5 +74,4 @@ public class GameFrame extends JLayeredPane implements KeyListener {
 		// TODO Auto-generated method stub
 		
 	}
-	
 }

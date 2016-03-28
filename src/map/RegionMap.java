@@ -6,25 +6,26 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.concurrent.CountDownLatch;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
+import unit.Party;
 import event.Corridor;
 import event.Encounter;
 import event.Event;
 
 public class RegionMap extends GenericMap{
 
-	private GameFrame frame;
-	private ExplorePanelManager manager;
+	private RegionPanelManager manager;
 	int avatarIndexX;
 	int avatarIndexY;
 	
-	public RegionMap(String name, GameFrame frame, ExplorePanelManager explorer) {
+	public RegionMap(String name, GameFrame frame, RegionPanelManager explorer, Party party) {
 		frame.add(this);
 		explorer.setRegionMap(this);
-        loadMap(name);
+        loadMap(name, party);
         this.setBounds(0, 0, GraphicsConstants.REGION_MAP_WIDTH, GraphicsConstants.REGION_MAP_HEIGHT);
 		this.name = name;
 		this.frame = frame;
@@ -40,15 +41,16 @@ public class RegionMap extends GenericMap{
 //	}
 
     @Override
-    public void paint(Graphics g) {
-        super.paint(g);
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
             RenderingHints.VALUE_ANTIALIAS_ON);
         Color bgColor = new Color(0,0,0);
         g2d.setColor(bgColor);
         g2d.fillRect(0, 0, GraphicsConstants.REGION_MAP_WIDTH, GraphicsConstants.REGION_MAP_HEIGHT);
-        this.drawMap(g2d, avatarIndexX, avatarIndexY, GraphicsConstants.REGION_CENTER_X, GraphicsConstants.REGION_CENTER_Y);
+        this.drawMap(g2d, avatarIndexX, avatarIndexY, GraphicsConstants.REGION_CENTER_X, GraphicsConstants.REGION_CENTER_Y,
+        			 GraphicsConstants.REGION_MAP_HEIGHT, GraphicsConstants.REGION_MAP_WIDTH);
         drawAvatar(g2d);
     }
 	
@@ -64,6 +66,7 @@ public class RegionMap extends GenericMap{
 	}
 	
 	public void keyPressed(KeyEvent e) {
+		System.out.println(javax.swing.SwingUtilities.isEventDispatchThread());
 		int keyCode = e.getKeyCode();
 		System.out.println(keyCode);
 		boolean moved = false;
@@ -85,6 +88,7 @@ public class RegionMap extends GenericMap{
 				moveRight();
 				break;
 			case 69:
+			case 10:
 				toggleEvent();
 				break;
 			case 84:
@@ -145,8 +149,8 @@ public class RegionMap extends GenericMap{
 	
 	public void takeCorridor(Corridor corridor) {
 		frame.remove(this);
-		RegionMap testMap = new RegionMap(corridor.getDestination(), frame, manager);
-		testMap.loadMap(corridor.getDestination());
+		RegionMap testMap = new RegionMap(corridor.getDestination(), frame, manager, party);
+		testMap.loadMap(corridor.getDestination(), party);
 		testMap.setCoordinates(corridor.getDestIndexY(), corridor.getDestIndexX());
 		manager.changeDominantPanel(testMap);
 		frame.refresh();
@@ -160,14 +164,13 @@ public class RegionMap extends GenericMap{
 //		explorer.changeDominantPanel(testMap);
 //		frame.refresh();
 		frame.removeAll();
-		BattlePanelManager battleManager = new BattlePanelManager(manager);
-		BattleMap testMap = new BattleMap(encounter.getDestination(), frame, battleManager);
-		testMap.loadMap(encounter.getDestination());
-		battleManager.changeDominantPanel(testMap);
-				
+		BattlePanelManager battleManager = new BattlePanelManager(manager, frame);
+		BattleMap testMap = new BattleMap(encounter.getDestination(), frame, battleManager, party);
+		BattleInfoPanel infoPanel = new BattleInfoPanel("BattleInfoPanel", frame, battleManager);
 		BattleMenuPanel battleMenuPanel = new BattleMenuPanel("BattleMenuPanel", frame, battleManager, BattleMenuPanel.getStandardMenu(), 1);
-		frame.setPanel(battleManager);
-		frame.repaint();
+		VictoryRewardsPanel victoryPanel = new VictoryRewardsPanel("VictoryRewardsPanel", frame, battleManager, VictoryRewardsPanel.getStandardMenu(), 2);
+		battleManager.changeDominantPanel(testMap);
+		testMap.checkAiTurn();
 		frame.refresh();
 	}
 	
@@ -183,7 +186,7 @@ public class RegionMap extends GenericMap{
 			Event event = tile.getEvent();
 			text = event.getClass().toString();
 		}
-		InfoPanel infoPanel = manager.getInfoPanel();
+		RegionInfoPanel infoPanel = manager.getInfoPanel();
 		infoPanel.displayText(text);
 	}
 	

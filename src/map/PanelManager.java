@@ -7,6 +7,11 @@ public class PanelManager extends GamePanel{
 	protected GamePanel dominantPanel;
 	protected GamePanel lastPanel;
 	
+	public PanelManager(GameFrame frame) {
+		this.frame = frame;
+		frame.setPanel(this);
+	}
+	
 	public GamePanel getDominantPanel() {
 		return dominantPanel;
 	}

@@ -1,0 +1,52 @@
+{ 
+	"Name": "Lance",
+	"Equipment Type": "Spear",
+	"Slot": "Lance",
+	"Description": "A standard issue lance",
+	"Base Gold Cost": 500,
+	"Gold Cost Scalar": 1.15,
+	"Level": 0,
+	"Max Level": 10,
+	"Effects": [
+		{
+			"Key": "Strength Factor",
+			"Name": "Lance Strength Factor",
+			"Description": "Adds Strength Factor to all abilities using this weapon",
+			"Type": "Ability Modifier",
+			"Modify Value": 1.5,
+			"Modify Type": "Additive",
+			"Modify Multiplier": "Apply Once",
+			"Modify Priority": -2,
+		},
+		{
+			"Key": "Stamina Cost",
+			"Name": "Lance Stamina Cost",
+			"Description": "Adds Stamina Cost to all abilities using this weapon",
+			"Type": "Ability Modifier",
+			"Modify Value": 100.0,
+			"Modify Type": "Additive",
+			"Modify Multiplier": "Apply Once",
+			"Modify Priority": -2,
+		},
+		{
+			"Key": "Strength Factor",
+			"Name": "Lance Strength Level Factor",
+			"Description": "Adds additional Strength Factor per rank",
+			"Type": "Ability Modifier",
+			"Modify Value": 0.1,
+			"Modify Type": "Additive",
+			"Modify Multiplier": "Equipment Level",
+			"Modify Priority": -1,
+		},
+		{
+			"Key": "Stamina Cost",
+			"Name": "Lance Stamina Level Cost",
+			"Description": "Adds additional Stamina Cost per rank",
+			"Type": "Ability Modifier",
+			"Modify Value": 5.0,
+			"Modify Type": "Additive",
+			"Modify Multiplier": "Equipment Level",
+			"Modify Priority": -1,
+		}
+	]
+}

@@ -1,0 +1,186 @@
+{ 
+			"Name": "Desperate Assault",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Description": "The Hero unleashes a flurry of blows using all his energy.",
+			"Priority": 4,
+			"Range": 1,
+			"Initial SP Cost": 1000,
+			"Base SP Cost": 500,
+			"SP Cost Scalar": 1.25,
+			"Level": 0,
+			"Max Level": 10,
+			"Effects": [
+				{
+					"Key": "Strength Factor",
+					"Name": "Every Ounce",
+					"Description": "Every point of stamina consumed by this ability adds .01 to the Strength Factor of this ability",
+					"Type": "Ability Modifier",
+					"Modify Value": 0.01,
+					"Modify Type": "Additive",
+					"Modify Multiplier": "Current Stamina",
+					"Modify Priority": 1,
+					"Origin": "Ability",
+				},
+				{
+					"Key": "Stamina Cost",
+					"Name": "Every Ounce",
+					"Description": "Drains all of the Hero's Stamina",
+					"Type": "Ability Modifier",
+					"Modify Value": 1.0,
+					"Modify Type": "Additive",
+					"Modify Multiplier": "Current Stamina",
+					"Modify Priority": 1,
+					"Origin": "Ability",
+				},
+				{
+					"Key": "Strength Factor",
+					"Name": "100% Muscle",
+					"Description": "Every Level the Hero has in this ability increases the effect of Every Ounce",
+					"Type": "Ability Modifier",
+					"Modify Value": 0.001,
+					"Modify Type": "Additive",
+					"Modify Multiplier": "Ability Level * Current Stamina",
+					"Modify Priority": 2,
+					"Origin": "Ability",
+				}
+			]
+		},
+		
+		{ 
+			"Name": "Endurance",
+			"Type": "Passive",
+			"Description": "The Hero's weathered body is more resistant to punishment.",
+			"Initial SP Cost": 0,
+			"Base SP Cost": 500,
+			"SP Cost Scalar": 1.25,
+			"Level": 0,
+			"Max Level": 10,
+			"Effects": [
+				{
+					"Key": "HP",
+					"Name": "Durable",
+					"Description": "Every Level the Hero has in this ability increases his health by 10 percent",
+					"Type": "Permanent Stat Self Modifier",
+					"Modify Value": 1.1,
+					"Modify Type": "Multiplicative",
+					"Modify Multiplier": "Ability Level",
+					"Modify Priority": 1,
+					"Origin": "Ability",
+				}
+			]
+		},
+		
+				{ 
+			"Name": "Sprinter",
+			"Type": "Passive",
+			"Description": "The Hero's natural speed allows him to move further.",
+			"Initial SP Cost": 0,
+			"Base SP Cost": 4000,
+			"SP Cost Scalar": 2.0,
+			"Level": 0,
+			"Max Level": 3,
+			"Effects": [
+				{
+					"Key": "Movement",
+					"Name": "Usain Bolt",
+					"Description": "Every Level the Hero has in this ability increases his movement by 1",
+					"Type": "Permanent Stat Self Modifier",
+					"Modify Value": 1.0,
+					"Modify Type": "Additive",
+					"Modify Multiplier": "Ability Level",
+					"Modify Priority": 1,
+					"Origin": "Ability",
+				}
+			]
+		},
+		
+		{ 
+			"Name": "Precision",
+			"Type": "Passive",
+			"Description": "The Hero puts extra effort into making sure his arrows find their mark.",
+			"Initial SP Cost": 0,
+			"Base SP Cost": 500,
+			"SP Cost Scalar": 1.25,
+			"Level": 0,
+			"Max Level": 10,
+			"Effects": [
+				{
+					"Key": "Strength Factor",
+					"Name": "One Shot, One Kill",
+					"Equipment Type": "Bow",
+					"Description": "Every Level the Hero has in this ability increases the Strength Factor on his Bow attacks by 5%",
+					"Type": "Ability Modifier",
+					"Modify Value": 1.05,
+					"Modify Type": "Multiplicative",
+					"Modify Multiplier": "Ability Level",
+					"Modify Priority": 1,
+					"Origin": "Ability",
+				},
+				{
+					"Key": "Stamina Cost",
+					"Name": "Aiming Isn't Easy",
+					"Equipment Type": "Bow",
+					"Description": "Every Level the Hero has in this ability increases the Stamina Cost on his Bow attacks by 5%",
+					"Type": "Ability Modifier",
+					"Modify Value": 1.05,
+					"Modify Type": "Multiplicative",
+					"Modify Multiplier": "Ability Level",
+					"Modify Priority": 1,
+					"Origin": "Ability",
+				}
+			]
+		},
+		
+		
+		{ 
+			"Name": "Desperate Assault",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Description": "The Hero unleashes a flurry of blows using all his energy.",
+			"Priority": 4,
+			"Range": 1,
+			"Strength Factor": 0.0,
+			"Stamina Cost": 0,
+			"Initial SP Cost": 1000,
+			"Base SP Cost": 500,
+			"SP Cost Scalar": 1.25,
+			"Level": -1,
+			"Max Level": 10,
+			"Effects": [
+				{
+					"Key": "Strength Factor",
+					"Name": "Every Ounce",
+					"Description": "Every point of stamina consumed by this ability adds .01 to the Strength Factor of this ability",
+					"Type": "Ability Modifier",
+					"Modify Value": 0.01,
+					"Modify Type": "Additive",
+					"Modify Multiplier": "Current Stamina",
+					"Modify Priority": 1,
+				},
+				{
+					"Key": "Stamina Cost",
+					"Name": "Every Ounce",
+					"Description": "Drains all of the Hero's Stamina",
+					"Type": "Ability Modifier",
+					"Modify Value": 1.0,
+					"Modify Type": "Additive",
+					"Modify Multiplier": "Current Stamina",
+					"Modify Priority": 1,
+				},
+				{
+					"Key": "Current Stamina",
+					"Name": "Draw Out Power",
+					"Description": "Every Level the Hero has in this ability restores up to 20 Stamina before using the ability",
+					"Type": "Stat Self Modifier",
+					"Subtype": "Current",
+					"Stat Name": "Stamina",
+					"Modify Value": 20.0,
+					"Modify Type": "Additive",
+					"Modify Multiplier": "Ability Level",
+					"Modify Duration": 1,
+					"Modify Duration Type": "Turn"
+					"Modify Priority": 1,
+				}
+			]
+		}

@@ -5,12 +5,16 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import javax.swing.JPanel;
 
+import unit.OrderOfBattle;
+import unit.Party;
+import unit.Unit;
 import event.Corridor;
 import event.Encounter;
 import event.Event;
@@ -18,22 +22,28 @@ import event.Event;
 
 public abstract class GenericMap extends GamePanel{
 
+	Party party;
+	protected List<Unit> tempUnitList;
 	TileMap tileMap;
 	int height;
 	int width;
+	int expReward;
+	int goldReward;
 	
-	public void loadMap(String mapName) {
+	protected void loadMap(String mapName, Party party) {
+		this.party = party;
 		readMapFile(mapName);
 	}
 	
 	private void readMapFile(String mapName) {
-		String fileName = "/Users/andrewmah/Documents/workspace/RPG/src/TestMaps/" + mapName + ".txt";
+		URL url = getClass().getResource("/" + mapName + ".txt");
+		String filename = url.getPath();
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(fileName));
+			BufferedReader br = new BufferedReader(new FileReader(filename));
 			br.mark(50000);
 			List<Event> mapEvents = processEvents(br);
 			String str = "";
-			Scanner scanner;
+			Scanner scanner = null;
 			int counter = 0;
 			height = 0;
 			width = 0;
@@ -55,7 +65,9 @@ public abstract class GenericMap extends GamePanel{
 						eventCounter = fillMapRow(str, counter - 2, mapEvents, eventCounter);
 					counter++;
 				}
+				scanner.close();
 			}
+			br.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -67,12 +79,46 @@ public abstract class GenericMap extends GamePanel{
 		String str = "";
 		Scanner scanner;
 		List<Event> mapEvents = new ArrayList<Event>();
+		tempUnitList = new ArrayList<Unit>();
 		while ((str = br.readLine()) != null) {
 			scanner = new Scanner(str);
-			if (scanner.hasNext() && scanner.next().equals("EVENT")) {
-				mapEvents.add(makeEvent(scanner));
+			if (scanner.hasNext()) {
+				String next = scanner.next();
+				if (next.equals("EVENT"))
+					mapEvents.add(makeEvent(scanner));
+				if (next.equals("UNIT")) {
+					String filename = scanner.next();
+					String faction = scanner.next();
+					String name = scanner.next();
+					int level = Integer.parseInt(scanner.next());
+					int y = Integer.parseInt(scanner.next());
+					int x = Integer.parseInt(scanner.next());
+					Unit unit = null;
+					if (faction.equals("ALLY")) 
+						unit = new Unit(filename, faction, name, party);
+					else
+						unit = new Unit(filename, faction, name, level);
+					unit.setPosition(y, x);
+					tempUnitList.add(unit);
+				}
+				if (next.equals("REWARD")) {
+					expReward = Integer.parseInt(scanner.next());
+					goldReward = Integer.parseInt(scanner.next());
+				}
+				if (next.equals("PARTY")) {
+					int partyIndex = Integer.parseInt(scanner.next());
+					Unit unit = party.getUnit(partyIndex);
+					if (unit != null) {
+						int y = Integer.parseInt(scanner.next());
+						int x = Integer.parseInt(scanner.next());
+						unit.setPosition(y, x);
+						tempUnitList.add(unit);
+					}
+				}
 			}
+			
 		}
+		Unit.setOrdering(tempUnitList);
 		br.reset();
 		return mapEvents;
 	}
@@ -87,9 +133,7 @@ public abstract class GenericMap extends GamePanel{
 			return event;
 		} else if (type.equals("ENCOUNTER")) {
 			String destination = scanner.next();
-			int destIndexY = Integer.parseInt(scanner.next());
-			int destIndexX = Integer.parseInt(scanner.next());
-			Event event = new Encounter(destination, destIndexY, destIndexX);
+			Event event = new Encounter(destination);
 			return event;
 		}
 		return null;
@@ -125,11 +169,11 @@ public abstract class GenericMap extends GamePanel{
 		return false;
 	}
 	
-	public void drawMap(Graphics2D g2d, int avatarPosX, int avatarPosY, int centerX, int centerY) {
+	public void drawMap(Graphics2D g2d, int avatarPosX, int avatarPosY, int centerX, int centerY, int mapHeight, int mapWidth) {
 		for (int rowIndex = 0; rowIndex < tileMap.getHeight(); rowIndex++) {
-			if (inMapBounds(avatarPosY, rowIndex, GraphicsConstants.REGION_MAP_HEIGHT, centerY)) {
+			if (inMapBounds(avatarPosY, rowIndex, mapHeight, centerY)) {
 				for (int colIndex = 0; colIndex < tileMap.getWidth(); colIndex++) {
-					if (inMapBounds(avatarPosX, colIndex, GraphicsConstants.REGION_MAP_WIDTH, centerX)) {
+					if (inMapBounds(avatarPosX, colIndex, mapWidth, centerX)) {
 						Tile tile = tileMap.getTile(rowIndex, colIndex);
 						tile.draw(g2d, rowIndex, colIndex, avatarPosX, avatarPosY, centerX, centerY);
 					}
@@ -138,18 +182,18 @@ public abstract class GenericMap extends GamePanel{
 		}
 	}
 	
-	public void drawMap(Graphics2D g2d) {
-		for (int rowIndex = 0; rowIndex < tileMap.getHeight(); rowIndex++) {
-			if (inMapBounds(rowIndex, GraphicsConstants.REGION_MAP_HEIGHT)) {
-				for (int colIndex = 0; colIndex < tileMap.getWidth(); colIndex++) {
-					if (inMapBounds(colIndex, GraphicsConstants.REGION_MAP_WIDTH)) {
-						Tile tile = tileMap.getTile(rowIndex, colIndex);
-						tile.draw(g2d, rowIndex, colIndex);
-					}
-				}
-			}
-		}
-	}
+//	public void drawMap(Graphics2D g2d) {
+//		for (int rowIndex = 0; rowIndex < tileMap.getHeight(); rowIndex++) {
+//			if (inMapBounds(rowIndex, GraphicsConstants.REGION_MAP_HEIGHT)) {
+//				for (int colIndex = 0; colIndex < tileMap.getWidth(); colIndex++) {
+//					if (inMapBounds(colIndex, GraphicsConstants.REGION_MAP_WIDTH)) {
+//						Tile tile = tileMap.getTile(rowIndex, colIndex);
+//						tile.draw(g2d, rowIndex, colIndex);
+//					}
+//				}
+//			}
+//		}
+//	}
 	
 	private boolean inMapBounds(int avatarIndex, int mapIndex, int bounds, int center) {
 		if ((((mapIndex - avatarIndex) * GraphicsConstants.REGION_TILE_SIZE) + center) < bounds &&
@@ -174,5 +218,9 @@ public abstract class GenericMap extends GamePanel{
 			}
 			System.out.println("");
 		}
+	}
+
+	public Party getParty() {
+		return party;
 	}
 }

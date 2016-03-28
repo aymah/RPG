@@ -1,0 +1,61 @@
+{ 
+	"Class": "Archer",
+	"Level": 0,
+	"Behavior": "Attack",
+	"Base Stats": {
+		"HP": 30,
+		"Strength": 10,
+		"Movement": 4,
+		"Initiative": 100,
+		"Stamina": 300
+	},
+	"Per Level Stats": {
+		"HP": 5,
+		"Strength": 2,
+		"Movement": 0,
+		"Initiative": 0,
+		"Stamina": 10
+	},
+	"Equipment": {
+		"Main Hand" : "testBow1",
+		"Off Hand" : "testDagger1",
+	},
+	"Abilities": [
+		{ 
+			"Name": "Dagger Attack",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Equipment Type": "Dagger",
+			"Description": "The Archer stabs the enemy with his dagger.",
+			"Priority": 3,
+			"Range": 1,
+			"Strength Factor": 0.0,
+			"Stamina Cost": 0,
+			"Effects": []
+		},
+		{ 
+			"Name": "Ranged Attack",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Equipment Type": "Bow",
+			"Description": "The Archer shoots the enemy with his bow.",
+			"Priority": 1,
+			"Range": 3,
+			"Strength Factor": 0.0,
+			"Stamina Cost": 0,
+			"Effects": []
+		},
+		{ 
+			"Name": "Power Shot",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Equipment Type": "Bow",
+			"Description": "The Archer pulls the drawstring behind his ear and unleashes a powerful arrow.",
+			"Priority": 2,
+			"Range": 4,
+			"Strength Factor": 0.5,
+			"Stamina Cost": 100,
+			"Effects": []
+		}
+	]
+}

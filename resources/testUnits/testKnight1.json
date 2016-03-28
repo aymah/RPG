@@ -1,0 +1,85 @@
+{ 
+	"Class": "Knight",
+	"Level": 0,
+	"Behavior": "Attack",
+	"Base Stats": {
+		"HP": 75,
+		"Strength": 14,
+		"Movement": 6,
+		"Initiative": 90,
+		"Stamina": 400
+	},
+	"Per Level Stats": {
+		"HP": 12,
+		"Strength": 3,
+		"Movement": 0,
+		"Initiative": 0,
+		"Stamina": 10
+	},
+	"Equipment": {
+		"Main Hand" : "testSword1",
+		"Off Hand" : "testLance1",
+		"Misc" : "testDart1",
+	},
+	"Abilities": [
+		{ 
+			"Name": "Basic Attack",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Equipment Type": "Sword",
+			"Description": "The knight slashes the enemy with his sword.",
+			"Priority": 1,
+			"Range": 1,
+			"Strength Factor": 0.0,
+			"Stamina Cost": 0,
+			"Effects": []
+		},
+		{ 
+			"Name": "Dart Attack",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Equipment Type": "Throwing",
+			"Description": "The Knight throws a short range weighted dart.",
+			"Priority": 2,
+			"Range": 2,
+			"Strength Factor": 0.0,
+			"Stamina Cost": 0,
+			"Effects": []
+		},
+		{ 
+			"Name": "Charge Attack",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Equipment Type": "Spear",
+			"Description": "The Knight charges the enemy with his lance, taking more stamina but dealing more damage based on the distance traveled.",
+			"Priority": 3,
+			"Range": 1,
+			"Strength Factor": 0.0,
+			"Stamina Cost": 50,
+			"Effects": [
+				{
+					"Key": "Strength Factor",
+					"Name": "Momentum",
+					"Description": "Every space the Knight has moved this turn adds .1 to the Strength Factor of this ability",
+					"Type": "Ability Modifier",
+					"Modify Value": 0.1,
+					"Modify Type": "Additive",
+					"Modify Multiplier": "Spaces Moved",
+					"Modify Time Period": "Turn",
+					"Modify Priority": 1,
+				},
+				{
+					"Key": "Stamina Cost",
+					"Name": "Extended Charge",
+					"Description": "Every space the Knight has moved this turn adds 10 to the Stamina Cost of this ability",
+					"Type": "Ability Modifier",
+					"Modify Value": 10.0,
+					"Modify Type": "Additive",
+					"Modify Multiplier": "Spaces Moved",
+					"Modify Time Period": "Turn",
+					"Modify Priority": 1,
+				}
+			]
+		}
+	]
+}

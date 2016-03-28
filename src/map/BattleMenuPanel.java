@@ -8,12 +8,14 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import unit.Unit;
 import event.Ability;
 import event.GenericMenuItem;
 import event.MenuItem;
 
 public class BattleMenuPanel extends MenuPanel {
 	
+
 	private int selectorIndexX;
 	private int selectorIndexY;
 
@@ -41,6 +43,7 @@ public class BattleMenuPanel extends MenuPanel {
         g2d.setColor(bgColor);
         g2d.fillRect(0, 0, GraphicsConstants.BATTLE_ACTION_MENU_WIDTH, GraphicsConstants.BATTLE_ACTION_MENU_HEIGHT);
         drawMenu(g2d);
+        ((BattlePanelManager)manager).getInfoPanel().repaint(); //ensures the info panel updates after potential ability is set
     }
     
     public void removePanel() {
@@ -48,17 +51,29 @@ public class BattleMenuPanel extends MenuPanel {
     }
     
     public void drawMenu(Graphics2D g2d) {
-//    	items = new ArrayList<String>();
-//    	items.add("Attack");
-//    	items.add("test2");
-//    	items.add("test3");
-//    	items.add("Exit Menu");
     	for (int i = 0; i < menuItems.size(); i++) {
             g2d.setColor(new Color(255,255,255));
-            if (selectorIndexY == i)
-            	g2d.setColor(new Color(255,0,0));
+      	    if (menuItems.get(i).getClass() == Ability.class) {
+     		    Unit unit = ((BattlePanelManager)manager).getBattleMap().getCurrUnit();
+  			    Ability ability = (Ability)menuItems.get(i);
+  			    unit.setPotentialAbility(ability);
+  			    if (ability.getStamCost(unit) > unit.getPotentialStamina() || ability.getMPCost(unit) > unit.getPotentialMP()) {
+  			    	g2d.setColor(new Color(190,190,190));
+  			    }
+  			    unit.wipePotentialAbility();
+  		    } 
+      	    if (selectorIndexY == i)
+		      	g2d.setColor(new Color(255,0,0));
     		g2d.drawString(menuItems.get(i).getName(), 10, 20 + i * 30);
     	}
+  	    if (menuItems.get(selectorIndexY).getClass() == Ability.class) {
+ 		    Unit unit = ((BattlePanelManager)manager).getBattleMap().getCurrUnit();
+			Ability ability = (Ability)menuItems.get(selectorIndexY);
+			unit.setPotentialAbility(ability);
+  	    } else {
+ 		    Unit unit = ((BattlePanelManager)manager).getBattleMap().getCurrUnit();
+		    unit.wipePotentialAbility();
+		}
     }
     
 	public void keyPressed(KeyEvent e) {
@@ -87,13 +102,16 @@ public class BattleMenuPanel extends MenuPanel {
 //					moveRight();
 //					break;
 			case 69:
+			case 10:
 				selectItem();
 				break;
+			case 81:
 			case 84:
+			case 27:
 				closeMenu();
 				break;
 		}
-		this.repaint();
+		frame.refresh();
 	}
 	
 	private void moveUp() {
@@ -109,29 +127,17 @@ public class BattleMenuPanel extends MenuPanel {
 	}
 	
 	private void selectItem() {
+  	    if (menuItems.get(selectorIndexY).getClass() == Ability.class) {
+ 		    Ability ability = (Ability)menuItems.get(selectorIndexY);
+ 		    Unit unit = ((BattlePanelManager)manager).getBattleMap().getCurrUnit();
+ 		    if (ability.getStamCost(unit) > unit.getPotentialStamina() || ability.getMPCost(unit) > unit.getPotentialMP())
+ 		    	return;
+ 	    }
 		menuItems.get(selectorIndexY).execute(this);
 	}
 	
 	private void openAbilityMenu() {
-    	List<Ability> abilities = ((BattlePanelManager) manager).getBattleMap().getCurrUnit().getAbilities();
-//    	for (Ability ability: abilities) {
-//    		MenuItem menuItem = new MenuItem() {
-//    			String name = ability.getName();
-//    			
-//				@Override
-//				public void execute(GamePanel panel) {
-//					// TODO Auto-generated method stub
-//					
-//				}
-//
-//				@Override
-//				public String getName() {
-//					// TODO Auto-generated method stub
-//					return null;
-//				}
-//    		}
-//    		menuItems.add(ability);
-//    	}
+    	List<Ability> abilities = ((BattlePanelManager) manager).getBattleMap().getCurrUnit().getActiveAbilities();
     	List<MenuItem> menuItems = new ArrayList<MenuItem>(abilities);
     	menuItems.add(exitMenuItem());
     	BattleMenuPanel abilityMenuPanel = new BattleMenuPanel("Ability Menu", frame, (BattlePanelManager) manager, menuItems, layer + 1);
@@ -142,7 +148,7 @@ public class BattleMenuPanel extends MenuPanel {
 		frame.refresh();
 	}
 
-	public void useTargetedAbility(Ability ability) {
+	public void useAbility(Ability ability) {
 		tempCloseAllMenus(ability);
 	}
 	
@@ -177,11 +183,56 @@ public class BattleMenuPanel extends MenuPanel {
 			}
 		};
 		menuItems.add(item);
-		item = new GenericMenuItem("test1");
+		item = new MenuItem() {
+			private String name = "Free Select";
+			
+			@Override
+			public void execute(GamePanel panel) {
+				MenuPanel menuPanel = (MenuPanel) panel;
+				BattlePanelManager battleManager = (BattlePanelManager)menuPanel.getManager();
+				battleManager.getBattleMap().setFreeSelectMode();
+				menuPanel.closeMenu();
+			}
+
+			@Override
+			public String getName() {
+				return name;
+			}
+		};	
 		menuItems.add(item);
-		item = new GenericMenuItem("test2");
+		item = new MenuItem() {
+			private String name = "End Turn";
+			
+			@Override
+			public void execute(GamePanel panel) {
+				MenuPanel menuPanel = (MenuPanel) panel;
+				menuPanel.closeMenu();
+				BattleMap bm = (BattleMap) menuPanel.manager.getDominantPanel();
+				bm.endTurn();
+			}
+
+			@Override
+			public String getName() {
+				return name;
+			}
+		};		
 		menuItems.add(item);
     	menuItems.add(exitMenuItem());
 		return menuItems;
 	}
+	
+	public int getSelectorIndexX() {
+		return selectorIndexX;
+	}
+
+
+	public int getSelectorIndexY() {
+		return selectorIndexY;
+	}
+	
+	public MenuItem getMenuItem() {
+		return menuItems.get(selectorIndexY);
+	}
+
+
 }

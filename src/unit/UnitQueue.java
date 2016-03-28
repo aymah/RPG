@@ -1,29 +1,32 @@
 package unit;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.PriorityQueue;
-import java.util.Queue;
+
+import unit.OrderOfBattle.UnitPlaceholder;
 
 public class UnitQueue {
 
 	PriorityQueue<Unit> pQueue;
 	
-	public UnitQueue(List<Unit> unitList) {
-		Comparator comparator = new UnitComparator();
+	public UnitQueue() {
+		Comparator comparator = buildComparator();
 		pQueue = new PriorityQueue<Unit>(10, comparator);
-		pQueue.addAll(unitList);
 	}
 	
-	
-	public class UnitComparator implements Comparator {
+	public Object[] toArray() {
+		return pQueue.toArray();
+	}
 
-		@Override
-		public int compare(Object o1, Object o2) {
-			Unit unit1 = (Unit)o1;
-			Unit unit2 = (Unit)o2;
-			return unit1.getOrdering() - unit2.getOrdering();
-		}
+	public static Comparator buildComparator() {
+		Comparator<Unit> comparator = new Comparator<Unit>() {
+			@Override
+			public int compare(Unit o1, Unit o2) {
+				if (o1.getOrdering() - o2.getOrdering() == 0) return 1;
+				return o1.getOrdering() - o2.getOrdering();
+			}
+		};
+		return comparator;
 	}
 	
 	public Unit deQueue() {

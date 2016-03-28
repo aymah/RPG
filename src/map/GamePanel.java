@@ -7,7 +7,8 @@ import javax.swing.JPanel;
 
 public class GamePanel extends JPanel{
 
-	String name;
+	protected GameFrame frame;
+	protected String name;
 		
 	public String getName() {
 		return name;

@@ -1,0 +1,32 @@
+{ 
+	"Name": "Armor",
+	"Equipment Type": "Armor",
+	"Slot": "Armor",
+	"Description": "A standard issue breastplate",
+	"Base Gold Cost": 500,
+	"Gold Cost Scalar": 1.15,
+	"Level": 0,
+	"Max Level": 10,
+	"Effects": [
+		{
+			"Key": "HP",
+			"Name": "Armor HP",
+			"Description": "Adds HP to the unit wearing this armor per rank",
+			"Type": "Permanent Stat Self Modifier",
+			"Modify Value": 10.0,
+			"Modify Type": "Additive",
+			"Modify Multiplier": "Equipment Level",
+			"Modify Priority": -1,
+		},
+		{
+			"Key": "Movement Stamina Cost",
+			"Name": "Armor Stamina Level Cost",
+			"Description": "Adds additional Stamina Cost to movement per rank",
+			"Type": "Permanent Stat Self Modifier",
+			"Modify Value": 1.0,
+			"Modify Type": "Additive",
+			"Modify Multiplier": "Equipment Level",
+			"Modify Priority": -1,
+		}
+	]
+}

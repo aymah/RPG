@@ -1,0 +1,22 @@
+{ 
+	"Name": "Boots",
+	"Equipment Type": "Boots",
+	"Slot": "Boots",
+	"Description": "Standard issue boots",
+	"Base Gold Cost": 750,
+	"Gold Cost Scalar": 1.25,
+	"Level": 0,
+	"Max Level": 1,
+	"Effects": [
+		{
+			"Key": "Movement",
+			"Name": "Boots Movement",
+			"Description": "Adds 1 movement",
+			"Type": "Permanent Stat Self Modifier",
+			"Modify Value": 1.0,
+			"Modify Type": "Additive",
+			"Modify Multiplier": "Equipment Level",
+			"Modify Priority": -1,
+		},
+	]
+}

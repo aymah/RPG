@@ -5,24 +5,19 @@ import java.util.List;
 import event.GenericMenuItem;
 import event.MenuItem;
 
-public class MenuPanel extends GamePanel{
+public class MenuPanel extends LayeredPanel {
 	
-	protected GameFrame frame;
 	protected List<MenuItem> menuItems;
 	protected MenuPanel subMenu;
 	protected MenuPanel superMenu;
-	protected Integer layer;
 	protected PanelManager manager;
 
 	
 	public MenuPanel(List<MenuItem> menuItems, int layer) {
+		super(layer);
 		this.menuItems =  menuItems;
 		this.layer = layer;
 	}
-	
-    public void displayPanel() {
-		frame.add(this, layer, 0);
-    }
     
     public void removePanel() {
     	frame.remove(this);
@@ -63,5 +58,9 @@ public class MenuPanel extends GamePanel{
     		subMenu = null;
     		superMenu = null;
     	}
+    }
+    
+    protected PanelManager getManager() {
+    	return manager;
     }
 }
