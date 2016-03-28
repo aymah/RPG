@@ -36,7 +36,7 @@ public abstract class GenericMap extends GamePanel{
 	}
 	
 	private void readMapFile(String mapName) {
-		URL url = getClass().getResource("/" + mapName + ".txt");
+		URL url = getClass().getResource("/testMaps/" + mapName + ".txt");
 		String filename = url.getPath();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(filename));

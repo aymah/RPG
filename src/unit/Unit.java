@@ -103,7 +103,8 @@ public class Unit {
 	}
 	
 	private void readUnitFile(String filename) {
-		URL url = getClass().getResource("/" + filename + ".json");
+		URL url = getClass().getResource("/testUnits/" + filename + ".json");
+		
 		filename = url.getPath();
 		JSONObject unitObject = null;
 		try {
@@ -171,7 +172,7 @@ public class Unit {
 	}
 	
 	private Equipment makeItem(String filename) {
-		URL url = getClass().getResource("/" + filename + ".json");
+		URL url = getClass().getResource("/testItems/" + filename + ".json");
 		filename = url.getPath();
 		JSONObject itemObject = null;
 		try {
