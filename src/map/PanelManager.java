@@ -1,25 +1,29 @@
 package map;
 
 import java.awt.event.KeyEvent;
+import java.util.Stack;
 
-public class PanelManager extends GamePanel{
+public class PanelManager extends GamePanel {
 
 	protected GamePanel dominantPanel;
-	protected GamePanel lastPanel;
+	protected Stack<GamePanel> panelStack;
+	protected LayeredPanel auxillaryPanel;
+	
 	
 	public PanelManager(GameFrame frame) {
 		this.frame = frame;
 		frame.setPanel(this);
+		panelStack = new Stack<GamePanel>();
 	}
 	
 	public GamePanel getDominantPanel() {
 		return dominantPanel;
 	}
 	
-	public GamePanel getLastPanel() {
-		return lastPanel;
-	}
-	
+//	public GamePanel getLastPanel() {
+//		return panelStack.peek();
+//	}
+//	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		dominantPanel.keyPressed(e);
@@ -30,7 +34,15 @@ public class PanelManager extends GamePanel{
 	}
 	
 	public void changeDominantPanel(GamePanel gamePanel) {
-		lastPanel = dominantPanel;
+		panelStack.add(dominantPanel);
 		dominantPanel = gamePanel;
+	}
+	
+	public void changeDominantPanelToPrevious() {
+		dominantPanel = panelStack.pop();
+	}
+	
+	public void setAuxillaryPanel(LayeredPanel panel) {
+		this.auxillaryPanel = panel;
 	}
 }

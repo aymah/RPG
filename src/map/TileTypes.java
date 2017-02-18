@@ -2,12 +2,13 @@ package map;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 
 public class TileTypes {
 
 	//might eventually be implemented when move to actual graphics?
 	//in that we probably don't want hardcoded stuff, instead read a dictionary from a config file
-	public static Image tileImage() {
+	public static BufferedImage tileImage() {
 		return null;
 	}
 	
@@ -47,8 +48,22 @@ public class TileTypes {
 				return new Color(255,0,255);
 			case 1:
 				return new Color(0,255,255);
+			case 2:
+				return new Color(255,255,0);
+			case 3:
+				return new Color(255,125,0);
 			default:
 				return new Color(255,255,255);
 		}
 	}
+
+//	public static Image getTileImage(String tileId) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//	
+//	public static Image getTileImage(TileSet tileSet, int y, int x) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 }

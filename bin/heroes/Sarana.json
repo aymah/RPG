@@ -1,0 +1,44 @@
+{ 
+	"Class": "Hero",
+	"Level": 0,
+	"Behavior": "Attack",
+	"Supply Cost": 1,
+	"Constitution": 2,
+	"Image": "testWizard",
+	"Base Stats": {
+		"HP": 400,
+		"GP": 150,
+		"Strength": 130,
+		"Tech": 40,
+		"Movement": 4,
+		"Initiative": 100,
+		"Stamina": 300
+	},
+	"Per Level Stats": {
+		"HP": 30,
+		"GP": 15,
+		"Strength": 13,
+		"Tech": 4,
+		"Movement": 0,
+		"Initiative": 0,
+		"Stamina": 10
+	},
+	"Equipment": {
+		"Sword" : "Bronze Lance",
+		"Armor" : "Leather Armor",
+	},
+	"Abilities": [
+		{ 
+			"Name": "Lance Attack",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Equipment Type": "Lance",
+			"Description": "Sarana stabs the enemy with her lance.",
+			"Priority": 1,
+			"Range": 1,
+			"Strength Factor": 0.0,
+			"Stamina Cost": 0,
+			"Effects": []
+		},
+	]
+}

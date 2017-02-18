@@ -1,0 +1,84 @@
+{ 
+	"Class": "Cleric",
+	"Level": 0,
+	"Behavior": "Attack",
+	"Base Stats": {
+		"HP": 25,
+		"MP": 80,
+		"Strength": 5,
+		"Magic": 20,
+		"Movement": 4,
+		"Initiative": 100,
+		"Stamina": 250
+	},
+	"Per Level Stats": {
+		"HP": 4,
+		"MP": 10,
+		"Strength": 1,
+		"Magic": 4, 
+		"Movement": 0,
+		"Initiative": 0,
+		"Stamina": 8
+	},
+	"Equipment": {
+		"Main Hand" : "testStaff1",
+	},
+	"Abilities": [
+		{ 
+			"Name": "Basic Attack",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Equipment Type": "Staff",
+			"Description": "The Cleric whacks the enemy with his staff.",
+			"Priority": -1,
+			"Range": 1,
+			"Strength Factor": 0.0,
+			"Stamina Cost": 0,
+			"Effects": []
+		},
+		{ 
+			"Name": "Heal",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Element Type": "Heal",
+			"Description": "The Cleric heals the target",
+			"Can Target Self": true,			
+			"Priority": 1,
+			"Range": 3,
+			"Magic Factor": -0.75,
+			"MP Cost": 20,
+			"Effects": []
+		},
+		{ 
+			"Name": "Rejuvenate",
+			"Type": "Active",
+			"Subtype": "Area Of Effect",
+			"Element Type": "Heal",
+			"Description": "The Cleric restores some stamina to all units nearby the cast.",
+			"Area Of Effect": [
+				[0, 1, 0],
+				[1, 1, 1],
+				[0, 1, 0],
+			],
+			"Can Target Self": true,
+			"Priority": 1,
+			"Range": 3,
+			"MP Cost": 30,
+			"Effects": [
+				{
+					"Key": "Stamina",
+					"Name": "Redbull",
+					"Description": "This ability gives the Target 2 Stamina for every point of Magic the Hero has",
+					"Type": "Create Stat Enemy Modifier",
+					"Modify Value": 2.0,
+					"Modify Type": "Additive",
+					"Modify Multiplier": "Current Magic",
+					"Modify Priority": 1,
+					"Modify Duration": 0,
+					"Modify Duration Type": "Turn",
+					"Origin": "Ability",
+				},
+			]
+		},
+	]
+}

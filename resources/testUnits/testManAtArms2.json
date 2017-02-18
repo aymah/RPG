@@ -2,6 +2,7 @@
 	"Class": "Man At Arms",
 	"Level": 0,
 	"Behavior": "Defend",
+	"Image": "testManAtArms",
 	"Acquisition Range": 8,
 	"Base Stats": {
 		"HP": 50,
@@ -27,7 +28,7 @@
 			"Subtype": "Targeted",
 			"Equipment Type": "Sword",
 			"Description": "The Man At Arms slashes the enemy with his sword.",
-			"Priority": 1,
+			"Priority": -1,
 			"Range": 1,
 			"Strength Factor": 0.0,
 			"Stamina Cost": 0,

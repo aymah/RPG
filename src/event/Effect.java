@@ -1,5 +1,11 @@
 package event;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -8,7 +14,7 @@ import java.util.Map;
 
 import unit.Unit;
 
-public class Effect {
+public class Effect implements Serializable {
 
 	private Map<String, Object> params;
 	private Ability ability;
@@ -52,7 +58,13 @@ public class Effect {
 			case "Ability Level * Current Stamina":
 				return ability.getLevel() * unit.getPotentialStamina();
 			case "Apply Once":
-				return 1;
+				if (ability != null && ability.getLevel() >= 0)
+					return 1;
+				if (equipment != null)
+					return 1;
+				if (params.get("Origin").equals("Created"))
+					return 1;
+				return 0;
 			case "Ability Level * HP":
 				return unit.getHP() * ability.getLevel();
 			case "Current Magic":
@@ -148,5 +160,25 @@ public class Effect {
 
 	public Map<String, Object> getParams() {
 		return params;
+	}
+	
+	public Effect copy() {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutputStream oos;
+		try {
+			oos = new ObjectOutputStream(bos);
+			oos.writeObject(this);
+			oos.flush();
+			oos.close();
+			bos.close();
+			byte[] byteData = bos.toByteArray();
+			
+			ByteArrayInputStream bais = new ByteArrayInputStream(byteData);
+			return (Effect)new ObjectInputStream(bais).readObject();
+		} catch (IOException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

@@ -1,16 +1,18 @@
 package map;
 
-import java.util.concurrent.CountDownLatch;
+import unit.UnitInfoPanel;
+
 
 public class BattlePanelManager extends PanelManager{
 
-	private RegionPanelManager exploreManager;
+	private ExplorePanelManager exploreManager;
 	private BattleMenuPanel battleMenuPanel;
+	private UnitInfoPanel unitInfoPanel;
 	private BattleMap battleMap;
 	private BattleInfoPanel infoPanel;
 	private VictoryRewardsPanel victoryPanel;
 	
-	public BattlePanelManager(RegionPanelManager exploreManager, GameFrame frame) {
+	public BattlePanelManager(ExplorePanelManager exploreManager, GameFrame frame) {
 		super(frame);
 		this.exploreManager = exploreManager;
 	}
@@ -39,7 +41,7 @@ public class BattlePanelManager extends PanelManager{
 		return battleMap;
 	}
 	
-	public RegionPanelManager getExplorePanelManager() {
+	public ExplorePanelManager getExplorePanelManager() {
 		return exploreManager;
 	}
 	
@@ -49,6 +51,14 @@ public class BattlePanelManager extends PanelManager{
 	
 	public void setInfoPanel(BattleInfoPanel infoPanel) {
 		this.infoPanel = infoPanel;
+	}
+
+	public UnitInfoPanel getUnitInfoPanel() {
+		return unitInfoPanel;
+	}
+	
+	public void setUnitInfoPanel(UnitInfoPanel unitInfoPanel) {
+		this.unitInfoPanel = unitInfoPanel;
 	}
 
 	public VictoryRewardsPanel getVictoryPanel() {

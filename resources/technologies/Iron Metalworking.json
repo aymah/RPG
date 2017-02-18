@@ -1,0 +1,21 @@
+{
+	"Name": "Iron Metalworking",
+	"Items Enabled": [
+			"Iron Arrow Longbow",
+			"Iron Bolt Crossbow",
+			"Iron Breastplate",
+			"Iron Buckler",
+			"Iron Chainmail",
+			"Iron Coif",
+			"Iron Dagger",
+			"Iron Heater",
+			"Iron Helm",
+			"Iron Kite Shield",
+			"Iron Lance",
+			"Iron Mace",
+			"Iron Pike",
+			"Iron Sword"
+	],
+	"Buildings Enabled": [
+	]
+}

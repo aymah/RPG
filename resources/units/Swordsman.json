@@ -1,0 +1,43 @@
+{ 
+	"Class": "Swordsman",
+	"Level": 0,
+	"Behavior": "Attack",
+	"Acquisition Range": 8,
+	"Supply Cost": 1,
+	"Constitution": 2,
+	"Image": "testManAtArms",
+	"Base Stats": {
+		"HP": 600,
+		"Strength": 100,
+		"Movement": 4,
+		"Initiative": 100,
+		"Stamina": 300
+	},
+	"Per Level Stats": {
+		"HP": 100,
+		"Strength": 15,
+		"Movement": 0,
+		"Initiative": 0,
+		"Stamina": 10
+	},
+	"Equipment": {
+		"Main Hand" : "Bronze Sword",
+		"Off Hand" : "Bronze Heater",
+		"Helm" : "Bronze Coif",
+		"Armor" : "Bronze Chainmail"
+	},
+	"Abilities": [
+		{ 
+			"Name": "Sword Attack",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Equipment Type": "Sword",
+			"Description": "The Swordsman slashes the enemy with his Sword.",
+			"Priority": -1,
+			"Range": 1,
+			"Strength Factor": 0.0,
+			"Stamina Cost": 0,
+			"Effects": []
+		}
+	]
+}

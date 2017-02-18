@@ -71,7 +71,7 @@ public class VictoryRewardsPanel extends MenuPanel{
     	
 		BattlePanelManager manager = (BattlePanelManager)this.manager;
 		Party party = manager.getBattleMap().getParty();
-		Hero hero = (Hero)party.getUnit(0);
+		Hero hero = party.getHeroList().get(0);
 		
 		if (levelDiff == 1)
 			g2d.drawString("Level Up!", 300, 105);
@@ -106,9 +106,6 @@ public class VictoryRewardsPanel extends MenuPanel{
 //				break;
 			case 69:
 				selectItem();
-				break;
-			case 84:
-				closeMenu();
 				break;
 		}
 		this.repaint();

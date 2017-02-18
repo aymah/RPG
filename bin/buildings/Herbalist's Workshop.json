@@ -1,0 +1,11 @@
+{
+	"Name": "Herbalist's Workshop",
+	"Type": "Merchant",
+	"Base Cost": 250,
+	"Upgradeable": false,
+	"Sells": [
+			"Weak Herbal Salve",
+			"Herbal Salve",
+			"Strong Herbal Salve"
+	]
+}

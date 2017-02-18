@@ -2,20 +2,20 @@ package map;
 
 import java.awt.event.KeyEvent;
 
-public class RegionPanelManager extends PanelManager {
+public class RegionPanelManager extends ExplorePanelManager {
 
 	private RegionMap regionMap;
 	private RegionInfoPanel infoPanel;
-	private RegionMenuPanel menuPanel;
+	private ExploreMenuPanel menuPanel;
 	
 	public RegionPanelManager(GameFrame frame) {
 		super(frame);
 	}
 	
-	public void setRegionMap(RegionMap regionMap) {
-		this.regionMap = regionMap;
-	}
-	
+//	public void setRegionMap(RegionMap regionMap) {
+//		this.regionMap = regionMap;
+//	}
+//	
 	public RegionMap getRegionMap() {
 		return regionMap;
 	}
@@ -28,11 +28,11 @@ public class RegionPanelManager extends PanelManager {
 		return infoPanel;
 	}
 	
-	public void setMenuPanel(RegionMenuPanel menuPanel) {
+	public void setMenuPanel(ExploreMenuPanel menuPanel) {
 		this.menuPanel = menuPanel;
 	}
 	
-	public RegionMenuPanel getMenuPanel() {
+	public ExploreMenuPanel getMenuPanel() {
 		return menuPanel;
 	}
 	
@@ -41,5 +41,15 @@ public class RegionPanelManager extends PanelManager {
 		dominantPanel = regionMap;
 		regionMap.restore();
 		infoPanel.restore();
+	}
+
+	@Override
+	public GenericMap getMap() {
+		return regionMap;
+	}
+
+	@Override
+	public void setMap(GenericMap map) {
+		regionMap = (RegionMap) map;
 	}
 }

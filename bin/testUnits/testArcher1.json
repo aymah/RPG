@@ -3,12 +3,13 @@
 	"Level": 0,
 	"Behavior": "Defend",
 	"Acquisition Range": 8,
+	"Image": "testArcher",
 	"Base Stats": {
 		"HP": 30,
 		"Strength": 10,
 		"Movement": 4,
 		"Initiative": 100,
-		"Stamina": 300
+		"Stamina": 280
 	},
 	"Per Level Stats": {
 		"HP": 5,
@@ -28,7 +29,7 @@
 			"Subtype": "Targeted",
 			"Equipment Type": "Dagger",
 			"Description": "The Archer stabs the enemy with his dagger.",
-			"Priority": 3,
+			"Priority": -1,
 			"Range": 1,
 			"Strength Factor": 0.0,
 			"Stamina Cost": 0,
@@ -40,7 +41,7 @@
 			"Subtype": "Targeted",
 			"Equipment Type": "Bow",
 			"Description": "The Archer shoots the enemy with his bow.",
-			"Priority": 1,
+			"Priority": -3,
 			"Range": 3,
 			"Strength Factor": 0.0,
 			"Stamina Cost": 0,
@@ -52,9 +53,9 @@
 			"Subtype": "Targeted",
 			"Equipment Type": "Bow",
 			"Description": "The Archer pulls the drawstring behind his ear and unleashes a powerful arrow.",
-			"Priority": 2,
+			"Priority": -2,
 			"Range": 4,
-			"Strength Factor": 0.5,
+			"Strength Factor": 0.3,
 			"Stamina Cost": 100,
 			"Effects": []
 		}

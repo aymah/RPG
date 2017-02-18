@@ -1,0 +1,9 @@
+{
+	"Name": "Basic Herbology",
+	"Items Enabled": [
+			"Weak Herbal Salve"
+	],
+	"Buildings Enabled": [
+			"Herbalist's Workshop"
+	]
+}

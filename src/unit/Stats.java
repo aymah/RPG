@@ -1,6 +1,8 @@
 package unit;
 
-public class Stats {
+import java.io.Serializable;
+
+public class Stats implements Serializable {
 
 
 	protected int HP;

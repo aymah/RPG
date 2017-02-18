@@ -2,6 +2,7 @@
 	"Class": "Hero",
 	"Level": 0,
 	"Behavior": "Attack",
+	"Image": "testTank",
 	"Base Stats": {
 		"HP": 80,
 		"MP": 80,
@@ -57,9 +58,9 @@
 				{
 					"Key": "Strength Factor",
 					"Name": "Power Strike Mastery",
-					"Description": "Every Level the Hero has in this ability adds .15 to the Strength Factor of this ability",
+					"Description": "Every Level the Hero has in this ability adds .2 to the Strength Factor of this ability",
 					"Type": "Ability Modifier",
-					"Modify Value": 0.15,
+					"Modify Value": 0.2,
 					"Modify Type": "Additive",
 					"Modify Multiplier": "Ability Level",
 					"Modify Priority": 1,
@@ -97,7 +98,7 @@
 					"Modify Type": "Multiplicative",
 					"Modify Multiplier": "Ability Level",
 					"Modify Priority": 1,
-					"Origin": "Ability",
+					"Origin": "Passive",
 				}
 			]
 		},
@@ -120,7 +121,7 @@
 					"Modify Type": "Additive",
 					"Modify Multiplier": "Ability Level * HP",
 					"Modify Priority": -10,
-					"Origin": "Ability",
+					"Origin": "Passive",
 				},
 				{
 					"Key": "Stamina Cost",
@@ -131,7 +132,7 @@
 					"Modify Type": "Additive",
 					"Modify Multiplier": "Ability Level * HP",
 					"Modify Priority": -10,
-					"Origin": "Ability",
+					"Origin": "Passive",
 				},
 			]
 		},
@@ -143,18 +144,18 @@
 			"Base SP Cost": 500,
 			"SP Cost Scalar": 1.25,
 			"Level": 0,
-			"Max Level": 5,
+			"Max Level": 4,
 			"Effects": [
 				{
 					"Key": "Stamina Regen",
 					"Name": "Marathon Man",
-					"Description": "Every Level the Hero has in this ability increases his stamina regen by 10%",
+					"Description": "Every Level the Hero has in this ability increases his stamina regen by 25%",
 					"Type": "Permanent Stat Self Modifier",
-					"Modify Value": 1.1,
+					"Modify Value": 1.25,
 					"Modify Type": "Multiplicative",
 					"Modify Multiplier": "Ability Level",
 					"Modify Priority": 1,
-					"Origin": "Ability",
+					"Origin": "Passive",
 				}
 			]
 		},
@@ -177,9 +178,9 @@
 				{
 					"Key": "Magic Factor",
 					"Name": "Blazing It Up",
-					"Description": "Every Level the Hero has in this ability increases the Magic Factor of this ability by .15",
+					"Description": "Every Level the Hero has in this ability increases the Magic Factor of this ability by .25",
 					"Type": "Ability Modifier",
-					"Modify Value": 0.15,
+					"Modify Value": 0.25,
 					"Modify Type": "Additive",
 					"Modify Multiplier": "Ability Level",
 					"Modify Priority": 1,
@@ -188,9 +189,9 @@
 				{
 					"Key": "MP Cost",
 					"Name": "Need More Fuel",
-					"Description": "Every Level the Hero has in this ability increases the MP cost of this ability by 2",
+					"Description": "Every Level the Hero has in this ability increases the MP cost of this ability by 1",
 					"Type": "Ability Modifier",
-					"Modify Value": 2.0,
+					"Modify Value": 1.0,
 					"Modify Type": "Additive",
 					"Modify Multiplier": "Ability Level",
 					"Modify Priority": 1,

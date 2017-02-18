@@ -1,0 +1,15 @@
+{
+	"Name": "Crossbow Technology",
+	"Units Enabled": [
+			"Crossbowman"
+	],
+	"Items Enabled": [
+			"Bronze Bolt Crossbow",
+			"Iron Bolt Crossbow",
+			"Steel Bolt Crossbow",
+			"Mithril Bolt Crossbow"
+	],
+	"Buildings Enabled": [
+			"Shooting Range"
+	]
+}

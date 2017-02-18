@@ -2,16 +2,25 @@ package map;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.Serializable;
 
 import javax.swing.JPanel;
 
-public class GamePanel extends JPanel{
+public class GamePanel extends JPanel implements Serializable {
 
-	protected GameFrame frame;
+	protected transient GameFrame frame;
 	protected String name;
 		
 	public String getName() {
 		return name;
+	}
+	
+	public GameFrame getFrame() {
+		return frame;
+	}
+	
+	public void setFrame(GameFrame frame) {
+		this.frame = frame;
 	}
 	
 	public void keyTyped(KeyEvent e) {

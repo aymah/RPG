@@ -40,7 +40,7 @@ public class MapTest {
         RegionMap panel = new RegionMap("testMap", frame, manager, party);
         panel.setCoordinates(1,1);
         RegionInfoPanel infoPanel = new RegionInfoPanel("testInfoPanel", frame, manager);
-        RegionMenuPanel menuPanel = new RegionMenuPanel("testMenuPanel", frame, manager, RegionMenuPanel.getStandardMenu(), 1);
+        ExploreMenuPanel menuPanel = new ExploreMenuPanel("testMenuPanel", frame, manager, null, 1, ExploreMenuPanel.getStandardMenu(), 0);
         manager.setDominantPanel(panel);
 
 

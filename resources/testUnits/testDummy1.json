@@ -3,10 +3,10 @@
 	"Level": 0,
 	"Behavior": "Defend",
 	"Base Stats": {
-		"HP": 1,
-		"Strength": 10,
-		"Movement": 4,
-		"Initiative": 10000,
+		"HP": 60,
+		"Strength": 1,
+		"Movement": 1,
+		"Initiative": 100,
 		"Stamina": 300
 	},
 	"Per Level Stats": {
@@ -29,7 +29,7 @@
 			"Description": "The Archer stabs the enemy with his dagger.",
 			"Priority": 3,
 			"Range": 1,
-			"Strength Factor": 0.0,
+			"Strength Factor": 1.0,
 			"Stamina Cost": 0,
 			"Effects": []
 		},

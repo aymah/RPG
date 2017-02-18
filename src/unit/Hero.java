@@ -5,28 +5,45 @@ import java.util.List;
 import java.util.Map;
 
 import event.Effect;
+import event.Equipment;
 
 public class Hero extends Unit {
 
 	private Map<String, Integer> statToBonusLevel;
 	private Stats baseStats;
 	private int exp;
+	private int totalExp;
 	private int toNextLevel;
 	private int statPoints;
 	
 	//hero should override some functions, esp those that set current stats. Instead the hero should calc his currStats values taking bonusStats into account
-	
 	public Hero(String filename, String faction, String name, Party party) {
-		super(filename, faction, name, party);
+		super(new UnitFactory(filename, party));
+		this.name = name;
+		this.faction = faction;
 		level = 0;
+		exp = 0;
+		totalExp = 0;
 		baseStats = new Stats(permStats);
 		statToBonusLevel = new HashMap<String, Integer>();
 		updateStats();
 		toNextLevel = 1000;
 	}
+	
+//	public Hero(UnitFactory unitFactory) {
+//		super(unitFactory);
+//		level = 0;
+//		exp = 0;
+//		totalExp = 0;
+//		baseStats = new Stats(permStats);
+//		statToBonusLevel = new HashMap<String, Integer>();
+//		updateStats();
+//		toNextLevel = 1000;
+//	}
 
 	public void addExp(int expReward) {
 		exp += expReward;
+		totalExp += expReward;
 		checkLevelUp();
 	}
 	
@@ -41,7 +58,6 @@ public class Hero extends Unit {
 		statPoints += toNextLevel;
 		exp -= toNextLevel;
 		toNextLevel *= 1.25;
-//		permStats.incrementStats(permStats, perLevelStats);
 		updateStats();
 		System.out.println("Hero Leveled to level " + level);
 		System.out.println("EXP to next level " + toNextLevel);
@@ -84,8 +100,8 @@ public class Hero extends Unit {
 	
 	public void updateStats() {
 		calculatePermStats();
-		currStats = new Stats(permStats);
-		stats = new Stats(permStats);
+//		currStats = new Stats(permStats);
+//		stats = new Stats(permStats);
 	}
 	
 //	public void prepUnit() {
@@ -106,7 +122,7 @@ public class Hero extends Unit {
 	}
 
 	public int getExp() {
-		updateStats(); //this is actually for reverting stats to permStats after a battle
+//		updateStats(); //this is actually for reverting stats to permStats after a battle
 		return exp;
 	}
 	
@@ -123,5 +139,15 @@ public class Hero extends Unit {
 		if (statToBonusLevel.get(stat) != null)
 			return statToBonusLevel.get(stat);
 		return 0;
+	}
+	
+//	public Hero respec() {
+//		Hero hero = new Hero(filename, faction, name, party);
+//		hero.addExp(totalExp);
+//		return hero;
+//	}
+	
+	public void setEquipment(Map<String, Equipment> equipment) {
+		this.equipment = equipment;
 	}
 }

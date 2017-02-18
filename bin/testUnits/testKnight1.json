@@ -14,7 +14,7 @@
 		"Strength": 3,
 		"Movement": 0,
 		"Initiative": 0,
-		"Stamina": 10
+		"Stamina": 14
 	},
 	"Equipment": {
 		"Main Hand" : "testSword1",
@@ -28,7 +28,7 @@
 			"Subtype": "Targeted",
 			"Equipment Type": "Sword",
 			"Description": "The knight slashes the enemy with his sword.",
-			"Priority": 1,
+			"Priority": -3,
 			"Range": 1,
 			"Strength Factor": 0.0,
 			"Stamina Cost": 0,
@@ -40,7 +40,7 @@
 			"Subtype": "Targeted",
 			"Equipment Type": "Throwing",
 			"Description": "The Knight throws a short range weighted dart.",
-			"Priority": 2,
+			"Priority": -1,
 			"Range": 2,
 			"Strength Factor": 0.0,
 			"Stamina Cost": 0,
@@ -52,7 +52,7 @@
 			"Subtype": "Targeted",
 			"Equipment Type": "Spear",
 			"Description": "The Knight charges the enemy with his lance, taking more stamina but dealing more damage based on the distance traveled.",
-			"Priority": 3,
+			"Priority": -2,
 			"Range": 1,
 			"Strength Factor": 0.0,
 			"Stamina Cost": 50,

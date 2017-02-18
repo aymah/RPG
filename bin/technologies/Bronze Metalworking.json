@@ -1,0 +1,21 @@
+{
+	"Name": "Bronze Metalworking",
+	"Items Enabled": [
+			"Bronze Arrow Longbow",
+			"Bronze Bolt Crossbow",
+			"Bronze Breastplate",
+			"Bronze Buckler",
+			"Bronze Chainmail",
+			"Bronze Coif",
+			"Bronze Dagger",
+			"Bronze Heater",
+			"Bronze Helm",
+			"Bronze Kite Shield",
+			"Bronze Lance",
+			"Bronze Mace",
+			"Bronze Pike",
+			"Bronze Sword"
+	],
+	"Buildings Enabled": [
+	]
+}

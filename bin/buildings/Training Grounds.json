@@ -1,0 +1,9 @@
+{
+	"Name": "Training Grounds",
+	"Type": "Enhancer",
+	"Base Cost": 100,
+	"Upgradeable": true,
+	"Max Level": "100",
+	"Cost Scalar": "1.5",
+	"Enhances": "Unit Level"
+}

@@ -2,92 +2,161 @@ package unit;
 
 import org.json.*;
 
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 
+import javax.imageio.ImageIO;
+
 import map.BattleMap;
 import map.Coordinates;
 import map.TileMap;
 import event.Ability;
+import event.Armor;
 import event.Corridor;
 import event.Effect;
 import event.Encounter;
 import event.Equipment;
 import event.Event;
+import event.Item;
 
-public class Unit {
+public class Unit implements Serializable {
 
-	OrderOfBattle orderOfBattle;
-	Stats permStats;
-	Stats stats;
-	Stats currStats;
-	Stats potentialStats;
-	Stats perLevelStats;
-	int level;
-	int posIndexX;
-	int posIndexY;
-	int acquisitionRange;
-	List<Ability> abilities;
-	Map<String, List<Effect>> statuses;
-	Map<String, Equipment> equipment; //map of slot to equipment
-	Ability currAbility;
-	Ability potentialAbility;
-	String faction;
-	int ordering;
-	String name;
-	String type;
-	Behavior behavior;
-	boolean takingDamage;
-	boolean isDying;
-	int movementCost = 5;
-	Party party;
-	String filename;
+	private OrderOfBattle orderOfBattle;
+	protected Stats permStats;
+	protected Stats stats;
+	protected Stats currStats;
+	protected Stats potentialStats;
+	protected Stats perLevelStats;
+	protected int level;
+	protected int constitution;
+	protected int leadership;
+	protected int posIndexX;
+	protected int posIndexY;
+	protected int supplyCost;
+	protected List<Ability> abilities;
+	protected Map<String, List<Effect>> statuses;
+	protected Map<String, Equipment> equipment; //map of slot to equipment
+	protected Ability currAbility;
+	protected Ability potentialAbility;
+	protected String faction;
+//	protected int ordering;
+	protected String name;
+	protected String type;
+	protected Behavior behavior;
+	protected boolean takingDamage;
+	protected boolean isDying;
+	protected int movementCost = 5;
+	protected Party party;
+	protected int targetPriority;
+	protected boolean isFlying;
+	protected transient BufferedImage standingImage;
+	protected transient BufferedImage moveAnimationImages;
+	protected Squad squad;
+	protected boolean hasRevert = false;
+	protected TempStats tempStats;
+	protected int simMeeleAttacks = 0;
+	protected boolean simMeeleSpace = false;
 	
-	public Unit(String filename, String faction, String name, int level) {
-		this.filename = filename;
+	public Unit(UnitFactory unitFactory) {
+		level = 0;
+		manufacture(unitFactory);
+	}
+	
+	public Unit(UnitFactory unitFactory, String faction, String name, int level) {
 		this.faction = faction;
 		this.name = name;
-		this.statuses = new HashMap<String, List<Effect>>();
 		this.level = level;
-		readUnitFile(filename);
-		this.permStats = new Stats(permStats, perLevelStats, level);
-		this.stats = new Stats(permStats);
-		this.currStats = new Stats(permStats);
-		Random rand = new Random();
-		takingDamage = false;
-		isDying = false;
+		manufacture(unitFactory);
 	}
 	
-	public Unit(String filename, String faction, String name, Party party) {
-		this.filename = filename;
-		this.faction = faction;
-		this.name = name;
-		this.statuses = new HashMap<String, List<Effect>>();
-		this.party = party;
-		readUnitFile(filename);
-		level = party.getLevel(type);
-//		party.loadUnitStats(type, stats, perLevelStats);
-		this.permStats = new Stats(permStats, perLevelStats, level);
-		this.stats = new Stats(permStats);
-		this.currStats = new Stats(permStats);
-		Random rand = new Random();
-		takingDamage = false;
-		isDying = false;
+	private void manufacture(UnitFactory unitFactory) {
+		if (level == 0)
+			level = unitFactory.getLevel();
+		perLevelStats = new Stats(unitFactory.getPerLevelStats());
+		permStats = new Stats(unitFactory.getStats(), perLevelStats, level);
+		stats = new Stats(permStats);
+		currStats = new Stats(permStats);
+		constitution = unitFactory.getConstitution();
+		leadership = unitFactory.getLeadership();
+		supplyCost = unitFactory.getSupplyCost();
+		abilities = unitFactory.getAbilities(); //make sure this function returns a new copy
+		statuses = unitFactory.getStatuses(); //make sure this function returns a new copy
+		equipment = unitFactory.getEquipment();
+		type = unitFactory.getType();
+		behavior = unitFactory.getBehavior();
+		isFlying = unitFactory.isFlying();
+		String imageName = unitFactory.getImageName();
+		try {
+			String prefix = "";
+			if (this.getClass() != Hero.class)
+				imageName += faction;
+			standingImage = ImageIO.read(getClass().getResourceAsStream("/testUnits/sprites/" + imageName + ".gif"));
+			moveAnimationImages = ImageIO.read(getClass().getResourceAsStream("/testUnits/sprites/" + imageName + "MoveAnimations.gif"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
+	
+//	public Unit(String filename, String faction, String name, int level) {
+//		this.filename = filename;
+//		this.faction = faction;
+//		this.name = name;
+//		this.statuses = new HashMap<String, List<Effect>>();
+//		this.level = level;
+//		isFlying = false;
+//		this.permStats = new Stats(permStats, perLevelStats, level);
+//		this.stats = new Stats(permStats);
+//		this.currStats = new Stats(permStats);
+//		Random rand = new Random();
+//		takingDamage = false;
+//		isDying = false;
+//	}
+//	
+//	public Unit(String filename, String faction, String name, Party party) {
+//		this.filename = filename;
+//		this.faction = faction;
+//		this.name = name;
+//		this.statuses = new HashMap<String, List<Effect>>();
+//		this.party = party;
+//		isFlying = false;
+//		level = 0;
+////		party.loadUnitStats(type, stats, perLevelStats);
+//		this.permStats = new Stats(permStats, perLevelStats, level);
+//		this.stats = new Stats(permStats);
+//		this.currStats = new Stats(permStats);
+//		Random rand = new Random();
+//		takingDamage = false;
+//		isDying = false;
+//	}
 	
 //	public Unit(Stats stats, String faction, String name) {
 //		this.stats = stats;
@@ -97,218 +166,8 @@ public class Unit {
 //		this.ordering = stats.initiative;
 //	}
 	
-	static String readFile(String path, Charset encoding) throws IOException {
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
-	    return new String(encoded, encoding);
-	}
-	
-	private void readUnitFile(String filename) {
-		URL url = getClass().getResource("/testUnits/" + filename + ".json");
-		
-		filename = url.getPath();
-		JSONObject unitObject = null;
-		try {
-			unitObject = new JSONObject(readFile(filename, StandardCharsets.UTF_8));
-		} catch (JSONException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		type = unitObject.getString("Class");
-		level = unitObject.getInt("Level");
-		behavior = makeBehavior(unitObject.getString("Behavior"));
-		if (unitObject.has("Acquisition Range"))
-			acquisitionRange = unitObject.getInt("Acquisition Range");
-		if (unitObject.has("Base Stats"))
-			makeUnit((JSONObject)unitObject.get("Base Stats"));
-		if (unitObject.has("Per Level Stats"))
-			makePerLevel((JSONObject)unitObject.get("Per Level Stats"));
-		if (unitObject.has("Equipment")) 
-			makeEquipment((JSONObject)unitObject.get("Equipment"));
-		if (unitObject.has("Abilities")) 
-			makeAbilities((JSONArray)unitObject.get("Abilities"));
-	}
-	
 
-	private void makeUnit(JSONObject baseStats) {
-		int HP = baseStats.getInt("HP");
-		int MP = 0;
-		if (baseStats.has("MP"))
-			MP = baseStats.getInt("MP");
-		int strength = baseStats.getInt("Strength");
-		int magic = 0;
-		if (baseStats.has("Magic"))
-			magic = baseStats.getInt("Magic");
-		int movement = baseStats.getInt("Movement");
-		int initiative = baseStats.getInt("Initiative");
-		int stamina = baseStats.getInt("Stamina");
-		this.permStats = new Stats(HP, MP, strength, magic, movement, initiative, stamina);
-	}
-	
-	private void makePerLevel(JSONObject perLevelStats) {
-		int HP = perLevelStats.getInt("HP");
-		int MP = 0;
-		if (perLevelStats.has("MP"))
-			MP = perLevelStats.getInt("MP");		
-		int strength = perLevelStats.getInt("Strength");
-			int magic = 0;
-		if (perLevelStats.has("Magic"))
-			magic = perLevelStats.getInt("Magic");
-		int movement = perLevelStats.getInt("Movement");
-		int initiative = perLevelStats.getInt("Initiative");
-		int stamina = perLevelStats.getInt("Stamina");
-		this.perLevelStats = new Stats(HP, MP, strength, magic, movement, initiative, stamina);
-	}
-	
-	private void makeEquipment(JSONObject equipmentMap) {
-		equipment = new HashMap<String, Equipment>();
-		for (String key: equipmentMap.keySet()) {
-			String filename = (String) equipmentMap.get(key);
-			Equipment item = makeItem(filename);
-			equipment.put(key, item);
-		}
-		addEquipmentEffectsToUnit();
-	}
-	
-	private Equipment makeItem(String filename) {
-		URL url = getClass().getResource("/testItems/" + filename + ".json");
-		filename = url.getPath();
-		JSONObject itemObject = null;
-		try {
-			itemObject = new JSONObject(readFile(filename, StandardCharsets.UTF_8));
-		} catch (JSONException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		Map<String, Object> params = new HashMap<String, Object>();
-		for (String key: itemObject.keySet()) {
-			if (!key.equals("Effects"))
-				params.put(key, itemObject.get(key));
-		}
-		List<Effect> effects = new ArrayList<Effect>();
-		JSONArray effectsList = (JSONArray) itemObject.get("Effects");
-		effects = makeEffects(effectsList);
-		Equipment equipment = new Equipment(params, effects);
-		return equipment;
-	}
 
-	private void makeAbilities(JSONArray abilityList) {
-		abilities = new ArrayList<Ability>();
-		for (Object ability: abilityList) {
-			JSONObject abilityJSON = (JSONObject) ability;
-			if (abilityJSON.getString("Type").equals("Passive"))
-				makeAbility(abilityJSON);
-		}
-		for (Object ability: abilityList) {
-			JSONObject abilityJSON = (JSONObject) ability;
-			if (abilityJSON.getString("Type").equals("Active"))
-				makeAbility((JSONObject) ability);
-		}
-	}
-	
-	private void makeAbility(JSONObject abilityObject) {
-		Ability ability = null;
-		List<Effect> effects = new ArrayList<Effect>();
-		Map<String, Object> params = new HashMap<String, Object>();
-		for (String key: abilityObject.keySet()) {
-			if (!key.equals("Effects"))
-				params.put(key, abilityObject.get(key));
-		}
-		JSONArray effectsList = (JSONArray) abilityObject.get("Effects");
-		effects = makeEffects(effectsList);
-		ability = new Ability(params, effects);
-		if (ability.get("Type").equals("Passive")) {
-			this.addEffects(ability.getEffects("Type", "Permanent Stat Self Modifier")); //adding ability effects to the unit
-		}
-		if (ability.hasEffect("Type", "Party Modifier"))
-			party.addEffects(ability.getEffects("Type", "Party Modifier"));
-		//adding equipment related effects to the ability and unit separately. Otherwise we could have duplicate effects in unit
-		if (ability.get("Type").equals("Active")) {
-			if (params.containsKey("Equipment Type"))
-				addEquipmentEffectsToAbility(ability, (String)params.get("Equipment Type")); //adds equipment effects to ability
-			addPassiveEffectsToAbility(ability);
-		}
-		abilities.add(ability);
-	}
-
-	private List<Effect> makeEffects(JSONArray effectsList) {
-		List<Effect> effects = new ArrayList<Effect>();
-		for (Object effectObject: effectsList) {
-			Effect effect = makeEffect((JSONObject) effectObject);
-			effects.add(effect);
-		}
-		return effects;
-	}
-
-	private Effect makeEffect(JSONObject effectObject) {
-		Map<String, Object> params = new HashMap<String, Object>();
-		for (String key: effectObject.keySet()) {
-			params.put(key, effectObject.get(key));
-		}
-		Effect effect = new Effect(params);
-		return effect;
-	}
-
-	private void addEquipmentEffectsToAbility(Ability ability, String equipmentType) {
-		for (String key: equipment.keySet()) {
-			Equipment item = equipment.get(key);
-			if (equipmentType.equals(item.getEquipmentType())) {
-				ability.addEffects(item.getEffects("Type", "Ability Modifier"));
-			}
-			equipItem(item, key);
-		}
-	}
-	
-	private void addPassiveEffectsToAbility(Ability ability) {
-		Map<String, List<Effect>> newEffects = new HashMap<String, List<Effect>>();
-		for (Ability passive: abilities) {
-			if (passive.getType().equals("Passive")) {
-				Map<String, List<Effect>> passiveEffects = passive.getAllEffects();
-				for(String key: passiveEffects.keySet()) {
-					List<Effect> effectList = passiveEffects.get(key);
-					List<Effect> newEffectList = new ArrayList<Effect>();
-					for (Effect effect: effectList) {
-						if (ability.hasParam("Equipment Type") && effect.hasParam("Equipment Type")) {
-							if (ability.get("Equipment Type").equals(effect.get("Equipment Type"))) {
-								newEffectList.add(effect);
-							}
-						}
-						if (ability.hasParam("Element Type") && effect.hasParam("Element Type")) {
-							if (ability.get("Element Type").equals(effect.get("Element Type"))) {
-								newEffectList.add(effect);
-							}
-						}
-					}
-					newEffects.put(key, newEffectList);
-				}
-			}
-		}
-		ability.addEffects(newEffects);
-		//for ability passive abilities
-		//	if passive type = passive
-		//		for each effect
-		//			if ability has element type
-		//				if ability.element type = passive.element type
-		//					ability.addeffect
-		//			if ability has equipment type
-		//				if equipment type = passive.equipment type
-		//					ability.addeffect
-
-	}
-	
-	private void addEquipmentEffectsToUnit() {
-		for (String key: equipment.keySet()) {
-			Equipment item = equipment.get(key);
-			addEffects(item.getEffects("Type", "Permanent Stat Self Modifier"));
-		}	
-	}
-	
-	private Behavior makeBehavior(String type) {
-		return Behavior.makeBehavior(type, this);
-	}
-	
 	public void setOrderOfBattle(OrderOfBattle orderOfBattle) {
 		this.orderOfBattle = orderOfBattle;
 	}
@@ -376,11 +235,24 @@ public class Unit {
 	
 	public void takeDamage(int damage) {
 		currStats.HP -= damage;
+		if (currStats.HP >= stats.HP)
+			currStats.HP = stats.HP;
 		checkDeath();
+	}
+	
+	public void takeArmorDamage(int damage) {
+		List<Armor> armors = getArmorList();
+		for (Armor armor: armors) {
+			armor.subtractDurability(damage);
+		}
 	}
 
 	public int getCurrHP() {
 		return currStats.HP;
+	}
+	
+	public void setCurrHP(int hp) {
+		currStats.HP = hp;
 	}
 	
 	public int getPotentialHP() {
@@ -440,11 +312,38 @@ public class Unit {
 	
 	public void endTurn() {
 		currStats.movement = stats.movement;
-		ordering += currStats.initiative;
-		removeEffects();
+//		ordering += currStats.initiative;
+		countDownTurnEffects();
 	}
 	
-	public void beginTurn(BattleMap map) {
+	public void beginSquadTurn(BattleMap map) {
+		for (Unit unit: squad.getUnitList())
+			unit.beginTurn(map);
+	}
+	
+	private void beginTurn(BattleMap map) {
+		regenStamina();
+		applyCurrentEffects(map);
+		if (isStunned()) {
+			map.setDamageDealt(0);
+			map.attackedAnimation(this);
+			map.endTurn();
+		}
+	}
+	
+	public boolean isStunned() {
+		if (Effect.getEffects(getAllEffects(), "Status", "Stunned").size() > 0)
+			return true;
+		return false;
+	}
+
+	private void regenStamina() {
+		currStats.stamina += calculateStaminaRegen();
+		if (currStats.stamina > stats.stamina)
+			currStats.stamina = stats.stamina;
+	}
+	
+	public int calculateStaminaRegen() {
 		int staminaRegen = currStats.initiative;
 		if (statuses.get("Stamina Regen") != null) {
 			List<Effect> effectList = statuses.get("Stamina Regen");
@@ -452,13 +351,10 @@ public class Unit {
 				staminaRegen = (int)(effect.modifyValue((double)staminaRegen, this));
 			}
 		}		
-		currStats.stamina += staminaRegen;
-		if (currStats.stamina > stats.stamina)
-			currStats.stamina = stats.stamina;
-		applyCurrentEffects(map);
+		return staminaRegen;
 	}
 
-	private void removeEffects() {
+	private void countDownTurnEffects() {
 		Map<String, List<Effect>> tempEffects = new HashMap<String, List<Effect>>();
 		for(String key: statuses.keySet()) {
 			List<Effect> effectList = statuses.get(key);
@@ -504,26 +400,41 @@ public class Unit {
 		statuses = tempEffects;
 	}
 
-	public void subractMovement(int movementUsed) {
-		currStats.stamina -= movementUsed * 5;
+	public void subtractMovement(int movementUsed) {
+		int movementStaminaCost = 5;
+		if (statuses.get("Movement Stamina Cost") != null) {
+			List<Effect> effectList = statuses.get("Movement Stamina Cost");
+			effectList.sort(Effect.getComparator());
+			for (Effect effect: effectList) {
+				movementStaminaCost = (int)effect.modifyValue((double)movementStaminaCost, this);
+			}
+		}
+		currStats.stamina -= movementUsed * movementStaminaCost;
 		currStats.movement -= movementUsed;
 	}
 	
-	public int getOrdering() {
-		return ordering;
+	public void tempSubtractMovement(int movementUsed) {
+		currStats.movement -= movementUsed;
+	}
+	public void tempReverseMovement(int movementUsed) {
+		currStats.movement += movementUsed;
 	}
 	
-	public void setOrdering(int ordering) {
-		this.ordering = ordering;
-	}
+//	public int getOrdering() {
+//		return ordering;
+//	}
+//	
+//	public void setOrdering(int ordering) {
+//		this.ordering = ordering;
+//	}
 
 	public String getName() {
 		return name;
 	}
 	
-	public void markMovementPriority(int[][] movePriorityMap, final int[][] movementMap, Unit unit) {
-		behavior.markMovementPriority(movePriorityMap, movementMap, unit, abilities);
-	}
+//	public void markMovementPriority(int[][] movePriorityMap, final int[][] movementMap, TileMap tileMap) {
+//		behavior.markMovementPriority(movePriorityMap, movementMap, tileMap, orderOfBattle, this);
+//	}
 
 	public int getCurrStamina() {
 //		if (statuses.get("Current Stamina") != null) {
@@ -609,18 +520,8 @@ public class Unit {
 			Equipment item = equipment.get(key);
 			equipmentList.add(item);
 		}
+		equipmentList.sort(Equipment.getComparator());
 		return equipmentList;
-	}
-
-	public static void setOrdering(List<Unit> unitList) {
-		Random random = new Random();
-		for (Unit unit: unitList) {
-			unit.setOrdering(random.nextInt(unit.getInitiative()));
-		}
-//		unitList.sort(UnitQueue.buildComparator());
-//		for (int i = 0; i < unitList.size(); i++) {
-//			unitList.get(i).setOrdering(i * (unit.));
-//		}
 	}
 	
 //	public void setStatSelfModfierEffects(Ability ability) {
@@ -799,7 +700,10 @@ public class Unit {
 				final int prevValue = currStats.get((String)effect.get("Key"));
 				int value = currStats.get((String)effect.get("Key"));
 				value = (int)effect.modifyValue((double)value, this);
+				System.out.println("effect " + effect.get("Name") + " " + value);
+				System.out.println("HP before " + currStats.getHP());
 				currStats.set((String)effect.get("Key"), Math.round(value));
+				System.out.println("HP after " + currStats.getHP());
 				if (key.equals("HP") && prevValue != value) {
 					checkDeath();
 					map.setDamageDealt(prevValue - value);
@@ -807,6 +711,10 @@ public class Unit {
 				}
 			}
 		}
+		if (currStats.HP >= stats.HP)
+			currStats.HP = stats.HP;
+		if (currStats.stamina >= stats.stamina)
+			currStats.stamina = stats.stamina;
 	}
 	
 	public void applyInstantEffects() {
@@ -822,18 +730,319 @@ public class Unit {
 			}
 		}
 		removeInstantEffects();
+		if (currStats.HP >= stats.HP)
+			currStats.HP = stats.HP;
+		if (currStats.stamina >= stats.stamina)
+			currStats.stamina = stats.stamina;
 	}
-	
-	public String getFilename() {
-		return filename;
-	}
-	
-	public void updateStats() {
+
+	public void healUnit() {
 		stats = new Stats(permStats);
 		currStats = new Stats(permStats);
 	}
+	
+	public void updateLevel(UnitFactory unitFactory) {
+		level = unitFactory.getLevel();
+		permStats = new Stats(unitFactory.getStats(), perLevelStats, level);
+		healUnit();
+	}
+	
+	public void clearEffects() {
+		Map<String, List<Effect>> tempEffects = new HashMap<String, List<Effect>>();
+		for(String key: statuses.keySet()) {
+			List<Effect> effectList = statuses.get(key);
+			List<Effect> removeList = new ArrayList<Effect>();
+			for(Effect effect: effectList) {
+				if (effect.hasParam("Modify Duration Type"))
+					removeList.add(effect);
+			}
+			effectList.removeAll(removeList);
+			tempEffects.put(key, effectList);
+		}
+		statuses = tempEffects;
+	}
 
-	public int getAcquisitionRange(String string) {
-		return acquisitionRange;
+//	public void aggro() {
+//		if (group != null && behavior.getName().equals("Defend")) {
+//			group.setBehavior("Attack");
+//		}
+//	}
+	
+//	public void setBehavior(Behavior behavior) {
+//		this.behavior = behavior;
+//	}
+
+	public Behavior getBehavior() {
+		return behavior;
+	}
+	
+	public int getTargetPriority() {
+		return targetPriority;
+	}
+
+	public void setTargetPriority(int targetPriority) {
+		this.targetPriority = targetPriority;
+	}
+
+	public boolean isFlying() {
+		return isFlying;
+	}
+
+//	public void setRandomOrdering() {
+//		Random random = new Random();
+//		setOrdering(random.nextInt(getInitiative()));
+//	}
+
+	public BufferedImage getImage() {
+		return standingImage;
+	}
+	
+	public BufferedImage getMoveAnimationImages() {
+		return moveAnimationImages;
+	}
+
+	public double getTotalAbsorption() {
+		List<Armor> armors = getArmorList();
+		double absorption = 0;
+		for (Armor armor: armors) {
+			absorption += armor.getAbsorption();
+		}
+		return absorption;
+	}
+	
+	public int getDurability() {
+		List<Armor> armors = getArmorList();
+		int durability = 0;
+		for (Armor armor: armors) {
+			durability += armor.getDurability();
+		}
+		return durability;
+	}
+	
+	public int getMaxDurability() {
+		List<Armor> armors = getArmorList();
+		int durability = 0;
+		for (Armor armor: armors) {
+			durability += armor.getMaxDurability();
+		}
+		return durability;
+	}
+	
+	public List<Armor> getArmorList() {
+		List<Armor> armors = new ArrayList<Armor>();
+		for (String key: equipment.keySet()) {
+			Equipment item = equipment.get(key);
+			if (item.getClass() == Armor.class)
+				armors.add((Armor)item);
+		}
+		armors.sort(new Comparator<Armor>() {
+			@Override
+			public int compare(Armor o1, Armor o2) {
+				return o2.getMaxDurability() - o1.getMaxDurability();
+			}
+		});
+		return armors;
+	}
+	
+	public int getArmorScore() {
+		List<Armor> armors = getArmorList();
+		double armorScore = 0;
+		for (Armor armor: armors) {
+			armorScore += armor.getDurability() * (armor.getAbsorption() * 100);
+		}
+		return (int)armorScore;
+	}
+	
+	public void restoreArmor() {
+		List<Armor> armors = getArmorList();
+		for (Armor armor: armors) {
+			armor.resetDurability();
+		}
+	}
+	
+	public void setSquad(Squad squad) {
+		this.squad = squad;
+	}
+	
+	public Squad getSquad() {
+		return squad;
+	}
+	
+	public int getLeadership() {
+		return leadership;
+	}
+
+	public boolean inLeadership() {
+		Unit leader = squad.getLeader();
+		return BattleMap.inRange(leader, leader.getLeadership(), posIndexY, posIndexX);
+	}
+	
+	public static Unit cloneUnit(Unit unit) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutputStream oos;
+		try {
+			oos = new ObjectOutputStream(bos);
+			oos.writeObject(unit);
+			oos.flush();
+			oos.close();
+			bos.close();
+			byte[] byteData = bos.toByteArray();
+			
+			ByteArrayInputStream bais = new ByteArrayInputStream(byteData);
+			return (Unit)new ObjectInputStream(bais).readObject();
+		} catch (IOException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public void saveCurrentStats() {
+		if (!hasRevert) {
+			hasRevert = true;
+			TempStats tempStats = new TempStats(stats, currStats, posIndexY, posIndexX, abilities, statuses, equipment);
+//			this.tempStats = tempStats.clone(); //NEED TO IMPLEMENT SOME SORT OF MANUAL CLONE THAT ISN"T SLOW AS FUCK AND HAS THE ABILITY TO REVERT
+			this.tempStats = tempStats;
+		}
+	}
+	
+	public void revert() {
+		if (hasRevert) {
+//			System.out.println("reverting!");
+			hasRevert = false;
+			stats = tempStats.stats;
+			currStats = tempStats.currStats;
+//			posIndexY = tempStats.posIndexY;
+//			posIndexX = tempStats.posIndexX;
+			orderOfBattle.moveToPhantomPlane(this);
+			orderOfBattle.movePhantomUnit(this, tempStats.posIndexY, tempStats.posIndexX);
+			orderOfBattle.moveToRegularPlane(this);
+//			abilities = tempStats.abilities;
+//			statuses = tempStats.statuses;
+			equipment = tempStats.equipment;
+			isDying = false;
+//			System.out.println("done reverting.");
+		}
+	}
+	
+	
+	public void resetMeeleAttacks() {
+		simMeeleAttacks = 0;
+	}
+	
+	public void incrementMeeleAttacks() {
+		simMeeleAttacks++;
+	}
+	
+	public boolean canBeMeeleAttacked() {
+		if (simMeeleAttacks >= 2)
+			return false;
+		return true;
+	}
+	
+	public void setMeeleSpace(boolean bool) {
+		simMeeleSpace = bool;
+	}
+	
+	public boolean takesMeeleSpace() {
+		return simMeeleSpace;
+	}
+	
+	
+	protected class TempStats implements Serializable {
+		protected Stats stats;
+		protected Stats currStats;
+		protected int posIndexX;
+		protected int posIndexY;
+		protected List<Ability> abilities;
+		protected Map<String, List<Effect>> statuses;
+		protected Map<String, Equipment> equipment;
+		
+		public TempStats(Stats stats, Stats currStats, int posIndexY, int posIndexX, List<Ability> abilities, Map<String, List<Effect>> statuses, Map<String, Equipment> equipment) {
+			this.stats = new Stats(stats);
+			this.currStats = new Stats(currStats);
+			this.posIndexY = posIndexY;
+			this.posIndexX = posIndexX;
+			this.abilities = abilities;
+			this.statuses = statuses;
+			this.equipment = Equipment.clone(equipment); //the clone function is not working properly
+//			this.equipment = equipment;
+		}
+		
+		public TempStats(Stats stats, Stats currStats, int posIndexY, int posIndexX) {
+			this.stats = new Stats(stats);
+			this.currStats = new Stats(currStats);
+			this.posIndexY = posIndexY;
+			this.posIndexX = posIndexX;
+		}
+
+		public Stats getStats() {
+			return stats;
+		}
+
+		public Stats getCurrStats() {
+			return currStats;
+		}
+
+		public int getPosIndexX() {
+			return posIndexX;
+		}
+
+		public int getPosIndexY() {
+			return posIndexY;
+		}
+
+		public List<Ability> getAbilities() {
+			return abilities;
+		}
+
+		public Map<String, List<Effect>> getStatuses() {
+			return statuses;
+		}
+
+		public Map<String, Equipment> getEquipment() {
+			return equipment;
+		}
+		
+		public TempStats clone() {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			try {
+				ObjectOutputStream oos = new ObjectOutputStream(bos);
+				oos.writeObject(this);
+				oos.flush();
+				oos.close();
+				bos.close();
+				byte[] byteData = bos.toByteArray();
+				ByteArrayInputStream bais = new ByteArrayInputStream(byteData);
+				return (TempStats) new ObjectInputStream(bais).readObject();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+	}
+
+
+	public int getSupplyCost() {
+		return supplyCost;
+	}
+	
+	public Stats getPermStats() {
+		return permStats;
+	}
+
+	public void useItem(Item item) {
+		if (item.getType().equals("Consumable")) {
+			if (item.get("Consumable Type").equals("Healing")) {
+				currStats.HP += (int)item.get("Healing Amount");
+				if (currStats.HP > permStats.HP)
+					currStats.HP = permStats.HP;
+			}
+		}
 	}
 }

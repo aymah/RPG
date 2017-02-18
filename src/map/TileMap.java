@@ -3,9 +3,10 @@ package map;
 import java.util.List;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.Serializable;
 
 
-public class TileMap {
+public class TileMap implements Serializable {
 	
 	private Tile[][] tileMap; //Tile[height][width]
 	private int height;

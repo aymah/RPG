@@ -3,7 +3,7 @@
 	"Equipment Type": "Boots",
 	"Slot": "Boots",
 	"Description": "Standard issue boots",
-	"Base Gold Cost": 750,
+	"Base Gold Cost": 300,
 	"Gold Cost Scalar": 1.25,
 	"Level": 0,
 	"Max Level": 1,

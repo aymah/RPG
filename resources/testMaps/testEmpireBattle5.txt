@@ -1,0 +1,5 @@
+UNIT Pikeman ENEMY P'1 0 9 19
+REWARD 1200 1200 
+TECHREWARD Iron Metalworking
+MEELESPACE 3
+BGM testBattleBGM2

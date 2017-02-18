@@ -1,0 +1,36 @@
+{ 
+	"Name": "Leather Armor",
+	"Type": "Equipment",
+	"Equipment Type": "Armor",
+	"Slot": "Chest",
+	"Description": "Hardened leather breastplate",
+	"Durability": 10,
+	"Absorption": 0.2,
+	"Weight": 1,
+	"Base Gold Cost": 300,
+	"Gold Cost Scalar": 1.25,
+	"Level": 0,
+	"Max Level": 5,
+	"Effects": [
+		{
+			"Key": "HP",
+			"Name": "Armor HP",
+			"Description": "Adds HP to the unit wearing this armor per rank",
+			"Type": "Permanent Stat Self Modifier",
+			"Modify Value": 20.0,
+			"Modify Type": "Additive",
+			"Modify Multiplier": "Equipment Level",
+			"Modify Priority": -1,
+		},
+		{
+			"Key": "Movement Stamina Cost",
+			"Name": "Armor Stamina Level Cost",
+			"Description": "Adds additional Stamina Cost to movement per rank",
+			"Type": "Permanent Stat Self Modifier",
+			"Modify Value": 1.0,
+			"Modify Type": "Additive",
+			"Modify Multiplier": "Equipment Level",
+			"Modify Priority": -1,
+		}
+	]
+}

@@ -3,43 +3,50 @@
 22
 
 # 0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21
-A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 
-A02 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 A02 A02 A02 A02 A02 A02
-A02 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 A02 A02 A02 A02 A02 A02 
-A02 a00 a00 A02 a00 A02 A02 A02 A02 A02 A02 A02 A02 A02 a00 a00 a00 a00 a00 a00 a00 A02 
-A02 a00 a00 A02 a01 a01 a01 A02 a01 A02 a01 A02 a01 A02 a00 a00 a00 a00 a00 a00 a00 A02 
-A02 a00 a00 a00 a01 a01 a01 a01 a01 a01 a01 a01 a01 A02 a00 a00 a00 a00 a00 A02 A02 A02 
-A02 a00 a00 a00 a01 a01 a01 a01 a01 a01 a01 a01 a01 A02 a00 a00 a00 a00 a00 A02 A02 A02 
-A02 a00 a00 A02 a01 a01 a01 A02 a01 A02 a01 A02 a01 A02 a00 a00 a00 a00 a00 A02 A02 A02 
-A02 a00 a00 A02 a00 A02 A02 A02 A02 A02 A02 A02 A02 A02 a00 a00 a00 a00 a00 A02 A02 A02 
-A02 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 A02 A02 a00 a00 a00 a00 A02 
-A02 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 a00 A02 A02 a00 a00 a00 a00 A02 
-A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 
+A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 
+A02,03 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 A04,25 A05,25 A06,25 A06,23 A07,23 A02,03
+A02,03 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 A04,26 A05,26 A06,26 A06,24 A07,24 A02,03 
+A02,03 a00,06 a00,06 A14,19 a00,06 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 A02,03 
+A02,03 a00,06 a00,06 A14,19 a03,16 a03,16 a03,16 A14,19 a03,16 A14,19 a03,16 A14,19 a03,16 A14,19 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 A02,03 
+A02,03 a00,06 a00,06 a00,06 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 A14,19 a00,06 a00,06 a00,06 a00,06 a00,06 A14,19 A14,19 A02,03 
+A02,03 a00,06 a00,06 a00,06 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 A14,19 a00,06 a00,06 a00,06 a00,06 a00,06 A14,19 A14,19 A02,03 
+A02,03 a00,06 a00,06 A14,19 a03,16 a03,16 a03,16 A14,19 a03,16 A14,19 a03,16 A14,19 a03,16 A14,19 a00,06 a00,06 a00,06 a00,06 a00,06 A14,19 A14,19 A02,03 
+A02,03 a00,06 a00,06 A14,19 a00,06 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 a00,06 a00,06 a00,06 a00,06 a00,06 A14,19 A14,19 A02,03 
+A02,03 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 A14,19 A14,19 a00,06 a00,06 a00,06 a00,06 A02,03 
+A02,03 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 a00,06 A14,19 A14,19 a00,06 a00,06 a00,06 a00,06 A02,03 
+A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 A02,03 
 
 # partyIndex y x
-PARTY 0 4 12
-PARTY 1 7 12
-PARTY 2 4 10
-PARTY 3 7 10
-PARTY 4 4 8
-PARTY 5 7 8
-PARTY 6 4 6
-PARTY 7 7 6
+PARTY 4 12
+PARTY 7 12
+PARTY 4 10
+PARTY 7 10
+PARTY 4 8
+PARTY 7 8
+PARTY 4 6
+PARTY 7 6
 
-UNIT testManAtArms1 ENEMY M1 0 3 19
-UNIT testManAtArms1 ENEMY M2 0 4 19
-UNIT testManAtArms1 ENEMY M3 0 3 20
-UNIT testManAtArms1 ENEMY M4 0 4 20
-UNIT testManAtArms1 ENEMY M5 0 9 19
-UNIT testManAtArms1 ENEMY M6 0 10 19
-UNIT testManAtArms1 ENEMY M7 0 9 20
-UNIT testManAtArms1 ENEMY M8 0 10 20
-UNIT testArcher2 ENEMY A1 0 1 15
-UNIT testArcher2 ENEMY A2 0 8 16
+SQUAD MAA1 Attack
+UNIT Swordsman ENEMY M'1 0 3 19
+UNIT Swordsman ENEMY M'2 0 4 19
+UNIT Swordsman ENEMY M'3 0 3 20
+UNIT Swordsman ENEMY M'4 0 4 20
+SQUAD MAA2 Attack
+UNIT Swordsman ENEMY M'5 0 9 19
+UNIT Swordsman ENEMY M'6 0 10 19
+UNIT Swordsman ENEMY M'7 0 9 20
+UNIT Swordsman ENEMY M'8 0 10 20
+SQUAD ARC1 Attack
+UNIT Crossbowman ENEMY A'1 0 1 15
+UNIT Crossbowman ENEMY A'2 0 8 16
 
-# UNIT testManAtArms1 ENEMY M1 0 6 4
+# UNIT Swordsman ENEMY M1 0 6 4
 # expReward goldReward
-REWARD 2500 2500
+REWARD 2500 3000
+TILESET villageLight
+BGM testBattleBGM1
+
+#EVENT MAP MESSAGE PERMANENT NONE Welcome to your first battle! I will now review the basics of how to fight battles. The first step of a battle is to place your units onto the field. The menu on the right allows you to select which unit you want to place onto the field. After selecting a unit with E, you can use A and D to change the starting position of the unit to any of the green squares. Press E again to confirm the position until all units are placed. The battle will automatically begin after all units are placed. During a battle you can move the current unit (highlighted with a yellow border) using WASD and E to confirm. If you want to move the screen you can do so with the arrow keys. After moving you can choose to attack or end turn. If you still have movement left, you can hit Q to use the rest of that movement. Additionally, during the movement phase you can hit R to reveal the movement/range map of the selected unit, or T to reveal the movement/range map of all enemy units. You can also use F to go into free select mode, and you can move the cursor (a yellow box) around and hover over units for a brief overview. Selecting units in this mode will bring up a more detailed description of the unit. A friendly reminder that although you can move through friendly units, most units cannot move through enemy units! Use this to your advantage. Now press Q and go fight the battle!
 
 
 

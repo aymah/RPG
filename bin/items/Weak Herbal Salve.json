@@ -1,0 +1,8 @@
+{ 
+	"Name": "Weak Herbal Salve",
+	"Description": "A simple mixture of herbal ingredients that slightly quickens recovery when applied to wounds",
+	"Gold Cost": 100,
+	"Type": "Consumable",
+	"Consumable Type": "Healing",
+	"Healing Amount": 200
+}

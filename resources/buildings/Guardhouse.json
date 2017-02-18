@@ -1,0 +1,11 @@
+{
+	"Name": "Guardhouse",
+	"Type": "Recruiter",
+	"Base Cost": 500,
+	"Upgradeable": true,
+	"Max Level": "100",
+	"Cost Scalar": "1.25",
+	"Recruits": [
+			"Pikeman",
+	]
+}

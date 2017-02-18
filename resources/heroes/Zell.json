@@ -1,0 +1,46 @@
+{ 
+	"Class": "Hero",
+	"Level": 0,
+	"Behavior": "Attack",
+	"Supply Cost": 1,
+	"Constitution": 3,
+	"Image": "testTank",
+	"Base Stats": {
+		"HP": 750,
+		"GP": 350,
+		"Strength": 140,
+		"Tech": 80,
+		"Movement": 3,
+		"Initiative": 120,
+		"Stamina": 250
+	},
+	"Per Level Stats": {
+		"HP": 63,
+		"GP": 15,
+		"Strength": 14,
+		"Tech": 8,
+		"Movement": 0,
+		"Initiative": 0,
+		"Stamina": 8
+	},
+	"Equipment": {
+		"Sword" : "Bronze Mace",
+		"Armor" : "Bronze Breastplate",
+		"Helm" : "Bronze Helm",
+		"Shield" : "Bronze Kite Shield"
+	},
+	"Abilities": [
+		{ 
+			"Name": "Mace Attack",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Equipment Type": "Mace",
+			"Description": "Zell bashes the enemy with his mace.",
+			"Priority": 1,
+			"Range": 1,
+			"Strength Factor": 0.0,
+			"Stamina Cost": 0,
+			"Effects": []
+		},
+	]
+}

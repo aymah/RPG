@@ -1,0 +1,15 @@
+{
+	"Name": "Lance Technology",
+	"Units Enabled": [
+			"Pikeman"
+	],
+	"Items Enabled": [
+			"Bronze Lance",
+			"Iron Lance",
+			"Steel Lance",
+			"Mithril Lance"
+	],
+	"Buildings Enabled": [
+			"Guardhouse"
+	]
+}

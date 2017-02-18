@@ -1,0 +1,8 @@
+{ 
+	"Name": "Strong Herbal Salve",
+	"Description": "A complex mixture of herbal ingredients that greatly quickens recovery when applied to wounds",
+	"Gold Cost": 400,
+	"Type": "Consumable",
+	"Consumable Type": "Healing",
+	"Healing Amount": 1800
+}

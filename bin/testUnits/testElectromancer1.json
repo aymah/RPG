@@ -1,0 +1,98 @@
+{ 
+	"Class": "Electromancer",
+	"Level": 0,
+	"Behavior": "Attack",
+	"Base Stats": {
+		"HP": 28,
+		"MP": 80,
+		"Strength": 5,
+		"Magic": 20,
+		"Movement": 4,
+		"Initiative": 100,
+		"Stamina": 250
+	},
+	"Per Level Stats": {
+		"HP": 4,
+		"MP": 10,
+		"Strength": 1,
+		"Magic": 4, 
+		"Movement": 0,
+		"Initiative": 0,
+		"Stamina": 8
+	},
+	"Equipment": {
+		"Main Hand" : "testStaff1",
+	},
+	"Abilities": [
+		{ 
+			"Name": "Basic Attack",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Equipment Type": "Staff",
+			"Description": "The Electromancer whacks his enemy with his staff.",
+			"Priority": -1,
+			"Range": 1,
+			"Strength Factor": 0.0,
+			"Stamina Cost": 0,
+			"Effects": []
+		},
+		{ 
+			"Name": "Static Discharge",
+			"Type": "Active",
+			"Subtype": "Area Of Effect",
+			"Element Type": "Lightning",
+			"Description": "The Electromancer harvests ambient energy in the air to explode, damaging and slowing units hit",
+			"Can Target Self": true,
+			"Level": 0,
+			"Priority": 1,
+			"Range": 3,
+			"Area Of Effect": [
+				[1, 1, 1],
+				[1, 1, 1],
+				[1, 1, 1],
+			],
+			"Magic Factor": 0.2,
+			"MP Cost": 10,
+			"Effects": [
+				{
+					"Key": "Movement",
+					"Name": "Cripple",
+					"Status": "Crippled",
+					"Description": "This ability robs an enemy of 1 movement",
+					"Type": "Stat Enemy Modifier",
+					"Modify Value": -1.0,
+					"Modify Type": "Additive",
+					"Modify Multiplier": "Apply Once",
+					"Modify Priority": 1,
+					"Modify Duration": 0,
+					"Modify Duration Type": "Turn",
+					"Origin": "Ability",
+				}
+			]
+		},
+		{ 
+			"Name": "Lightning Bolt",
+			"Type": "Active",
+			"Subtype": "Chain",
+			"Element Type": "Lightning",
+			"Description": "The Hero launches a powerful bolt of Lightning, stunning the target",
+			"Priority": 1,
+			"Range": 3,
+			"Magic Factor": 0.5,
+			"MP Cost": 40,
+			"Effects": [
+				{
+					"Key": "Stun",
+					"Name": "Electrifying",
+					"Status": "Stunned",
+					"Description": "Enemies hit by this ability are stunned for one turn",
+					"Type": "Status Enemy Modifier",
+					"Modify Priority": 1,
+					"Modify Duration": 1,
+					"Modify Duration Type": "Turn",
+					"Origin": "Ability",
+				},
+			]
+		},
+	]
+}

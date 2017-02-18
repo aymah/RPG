@@ -3,33 +3,66 @@ package map;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.Timer;
 
 import unit.Party;
+import unit.Unit;
 import event.Corridor;
 import event.Encounter;
 import event.Event;
+import event.MapEventManager;
+import event.MapEvent;
 
 public class RegionMap extends GenericMap{
 
 	private RegionPanelManager manager;
-	int avatarIndexX;
-	int avatarIndexY;
+	private boolean animating;
+	private transient BufferedImage avatarStandingImage;
+	private transient BufferedImage avatarImage;
+	private transient BufferedImage avatarMoveAnimationImages;
+	private int y;
+	private int x;
 	
-	public RegionMap(String name, GameFrame frame, RegionPanelManager explorer, Party party) {
+	public RegionMap(String name, GameFrame frame, RegionPanelManager manager, Party party) {
 		frame.add(this);
-		explorer.setRegionMap(this);
+		manager.setMap(this);
+		party.setMapName(name);
         loadMap(name, party);
         this.setBounds(0, 0, GraphicsConstants.REGION_MAP_WIDTH, GraphicsConstants.REGION_MAP_HEIGHT);
 		this.name = name;
 		this.frame = frame;
-		this.manager = explorer;
+		this.manager = manager;
+		this.y = 0;
+		this.x = 0;
+		try {
+			avatarStandingImage = ImageIO.read(getClass().getResourceAsStream("/testUnits/sprites/testRenal.gif"));
+			avatarImage = avatarStandingImage;
+			avatarMoveAnimationImages = ImageIO.read(getClass().getResourceAsStream("/testUnits/sprites/testRenalMoveAnimations.gif"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		executeEvents();
+	}
+	
+	public void restoreMap() {
+		frame.add(this);
+		manager.setMap(this);
 	}
 	
 //	public RegionMap(String name, GameFrame frame, JComponent prev) {
@@ -49,15 +82,18 @@ public class RegionMap extends GenericMap{
         Color bgColor = new Color(0,0,0);
         g2d.setColor(bgColor);
         g2d.fillRect(0, 0, GraphicsConstants.REGION_MAP_WIDTH, GraphicsConstants.REGION_MAP_HEIGHT);
-        this.drawMap(g2d, avatarIndexX, avatarIndexY, GraphicsConstants.REGION_CENTER_X, GraphicsConstants.REGION_CENTER_Y,
-        			 GraphicsConstants.REGION_MAP_HEIGHT, GraphicsConstants.REGION_MAP_WIDTH);
+        this.drawMap(g2d, party.getAvatarIndexX(), party.getAvatarIndexY(), GraphicsConstants.REGION_CENTER_X, GraphicsConstants.REGION_CENTER_Y,
+        			 GraphicsConstants.REGION_MAP_HEIGHT, GraphicsConstants.REGION_MAP_WIDTH, x, y);
         drawAvatar(g2d);
     }
 	
     public void drawAvatar(Graphics2D g2d) {
-        Color c = new Color(0, 255, 0);
-        g2d.setColor(c);
-        g2d.fillOval(GraphicsConstants.REGION_CENTER_X, GraphicsConstants.REGION_CENTER_Y, GraphicsConstants.REGION_TILE_SIZE, GraphicsConstants.REGION_TILE_SIZE);
+//        Color c = new Color(0, 255, 0);
+//        g2d.setColor(c);
+//        g2d.fillOval(GraphicsConstants.REGION_CENTER_X, GraphicsConstants.REGION_CENTER_Y, GraphicsConstants.REGION_TILE_SIZE, GraphicsConstants.REGION_TILE_SIZE);
+    	int offsetX = (GraphicsConstants.REGION_TILE_SIZE - avatarImage.getWidth(null) * GraphicsConstants.TILE_SIZE_SELECTED)/2;
+    	int offsetY = (GraphicsConstants.REGION_TILE_SIZE - avatarImage.getHeight(null) * GraphicsConstants.TILE_SIZE_SELECTED)/2;
+    	g2d.drawImage(avatarImage, GraphicsConstants.REGION_CENTER_X + offsetX, GraphicsConstants.REGION_CENTER_Y + offsetY, avatarImage.getWidth(null)*GraphicsConstants.TILE_SIZE_SELECTED, avatarImage.getHeight(null)*GraphicsConstants.TILE_SIZE_SELECTED, null);
     }
     
 	public void keyTyped(KeyEvent e) {
@@ -66,93 +102,176 @@ public class RegionMap extends GenericMap{
 	}
 	
 	public void keyPressed(KeyEvent e) {
-		System.out.println(javax.swing.SwingUtilities.isEventDispatchThread());
 		int keyCode = e.getKeyCode();
 		System.out.println(keyCode);
 		boolean moved = false;
+		String direction = "";
 		switch (keyCode) {
 			case 87:
 			case 38:
-				moveUp();
+				moved = moveUp();
+				direction = "up";
 				break;
 			case 83:
 			case 40:
-				moveDown();
+				moved = moveDown();
+				direction = "down";
 				break;
 			case 65:
 			case 37:
-				moveLeft();
+				moved = moveLeft();
+				direction = "left";
 				break;
 			case 68:
 			case 39:
-				moveRight();
+				moved = moveRight();
+				direction = "right";
 				break;
 			case 69:
 			case 10:
-				toggleEvent();
+				activateEvent();
 				break;
 			case 84:
-				openMenu();
+				openMenu("Standard");
 				break;
+		}
+		if (moved) {
+			walkingAnimation(direction);
+			walkingEvents();
+		} else if (!direction.equals("")) { //if move command but couldnt move
+			avatarImage = avatarStandingImage;
 		}
 		checkTileTest();
 		this.repaint();
 	}
 	
-	private void moveUp() {
-		avatarIndexY--;
-		if (avatarIndexY < 0)
-			avatarIndexY = 0;
-		else if (!tileMap.getTile(avatarIndexY, avatarIndexX).isAccessable())
-			avatarIndexY++;
-			
+	private void walkingAnimation(String direction) {
+		animating = true;
+		frame.setAcceptingInput(false);
+		CountDownLatch cdl = new CountDownLatch(1);
+	    Timer timer = new Timer(0, new ActionListener() {
+		   
+		    int i = 0;
+		    
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            if(i < 4) {
+	            	switch (direction) {
+	            		case "up":
+	            			y += GraphicsConstants.REGION_TILE_SIZE/4;
+	            			break;
+	            		case "down":
+	            			y -= GraphicsConstants.REGION_TILE_SIZE/4;
+	            			break;
+	            		case "left":
+	            			x += GraphicsConstants.REGION_TILE_SIZE/4;
+	            			break;
+	            		case "right":
+	            			x -= GraphicsConstants.REGION_TILE_SIZE/4;
+	            			break;
+	            	}
+	            	avatarImage = getAnimationImage(direction, i);
+	            	repaint();
+	            } else {
+	            	if (!frame.hasNextInput()) 
+	            		avatarImage = avatarStandingImage;
+	                endAnimation(e);
+	            }
+	            i++;
+	        }
+	        
+	        private void endAnimation(ActionEvent e) {
+	        	x = 0;
+	        	y = 0;
+	        	animating = false;
+	    		frame.setAcceptingInput(true);
+                repaint();
+                cdl.countDown();
+                ((Timer)e.getSource()).stop();
+	        }
+	    });
+	    timer.setRepeats(true);
+	    timer.setDelay(40);
+	    timer.start();
+	    try {
+			cdl.await();
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	private boolean moveUp() {
+		if (party.getAvatarIndexY() - 1 >= 0 && tileMap.getTile(party.getAvatarIndexY() - 1, party.getAvatarIndexX()).isAccessable()) {
+			party.setAvatarIndexY(party.getAvatarIndexY() - 1);
+			y -= GraphicsConstants.REGION_TILE_SIZE;
+			return true;
+		}
+		return false;
 	}
 	
-	private void moveDown() {
-		avatarIndexY++;
-		if (avatarIndexY > height - 1)
-			avatarIndexY = height - 1;
-		else if (!tileMap.getTile(avatarIndexY, avatarIndexX).isAccessable())
-			avatarIndexY--;
+	private boolean moveDown() {
+		if (party.getAvatarIndexY() + 1 < height && tileMap.getTile(party.getAvatarIndexY() + 1, party.getAvatarIndexX()).isAccessable()) {
+			party.setAvatarIndexY(party.getAvatarIndexY() + 1);
+			y += GraphicsConstants.REGION_TILE_SIZE;
+			return true;
+		}
+		return false;
 	}
 	
-	private void moveLeft() {
-		avatarIndexX--;
-		if (avatarIndexX < 0)
-			avatarIndexX = 0;
-		else if (!tileMap.getTile(avatarIndexY, avatarIndexX).isAccessable()) 
-			avatarIndexX++;
+	private boolean moveLeft() {
+		if (party.getAvatarIndexX() - 1 >= 0 && tileMap.getTile(party.getAvatarIndexY(), party.getAvatarIndexX() - 1).isAccessable()) {
+			party.setAvatarIndexX(party.getAvatarIndexX() - 1);
+			x -= GraphicsConstants.REGION_TILE_SIZE;
+			return true;
+		}
+		return false;
 	}
 	
-	private void moveRight() {
-		avatarIndexX++;
-		if (avatarIndexX > width - 1)
-			avatarIndexX = width - 1;
-		else if (!tileMap.getTile(avatarIndexY, avatarIndexX).isAccessable())
-			avatarIndexX--;
+	private boolean moveRight() {
+		if (party.getAvatarIndexX() + 1 < width && tileMap.getTile(party.getAvatarIndexY(), party.getAvatarIndexX() + 1).isAccessable()) {
+			party.setAvatarIndexX(party.getAvatarIndexX() + 1);
+			x += GraphicsConstants.REGION_TILE_SIZE;
+			return true;
+		}
+		return false;
 	}
 	
-	private void openMenu() {
-		RegionMenuPanel menuPanel = manager.getMenuPanel();
+	private void openMenu(String source) {
+		ExploreMenuPanel menuPanel = manager.getMenuPanel();
+		menuPanel.setSource(source);
 		menuPanel.displayPanel();
 		manager.changeDominantPanel(menuPanel);
 		frame.refresh();
 	}
 	
-	private void toggleEvent() {
-		Tile tile = tileMap.getTile(avatarIndexY, avatarIndexX);
+	private void activateEvent() {
+		Tile tile = tileMap.getTile(party.getAvatarIndexY(), party.getAvatarIndexX());
 		if (tile.hasEvent()) {
-			Event event = tile.getEvent();
-			event.execute(this);
+			MapEventManager event = tile.getEvent();
+			if (((MapEvent) event.getCurrentEvent()).getActivationMethod().equals("ACTIVATION"))
+				event.execute(this);
 		}
 	}
-	
+
 	public void takeCorridor(Corridor corridor) {
+		party.getGameStateManager().add(this);
 		frame.remove(this);
-		RegionMap testMap = new RegionMap(corridor.getDestination(), frame, manager, party);
-		testMap.loadMap(corridor.getDestination(), party);
-		testMap.setCoordinates(corridor.getDestIndexY(), corridor.getDestIndexX());
-		manager.changeDominantPanel(testMap);
+	    RegionMap panel = (RegionMap)party.getGameStateManager().getMap(corridor.getDestination());
+	    if (panel == null) {
+			panel = new RegionMap(corridor.getDestination(), frame, manager, party);
+	    } else {
+		    panel.setManager(manager);
+		    panel.setFrame(frame);
+		    panel.restoreMap();
+	    }
+	    if (!bgmName.equals(panel.getBGMName())) {
+			stopBGM();
+		    panel.startBGM();
+	    } else {
+	    	panel.setBGM(bgm);
+	    }
+	    panel.setCoordinates(corridor.getDestIndexY(), corridor.getDestIndexX());
+		manager.changeDominantPanel(panel);
 		frame.refresh();
 	}
 	
@@ -164,23 +283,21 @@ public class RegionMap extends GenericMap{
 //		explorer.changeDominantPanel(testMap);
 //		frame.refresh();
 		frame.removeAll();
+		stopBGM();
 		BattlePanelManager battleManager = new BattlePanelManager(manager, frame);
 		BattleMap testMap = new BattleMap(encounter.getDestination(), frame, battleManager, party);
-		BattleInfoPanel infoPanel = new BattleInfoPanel("BattleInfoPanel", frame, battleManager);
-		BattleMenuPanel battleMenuPanel = new BattleMenuPanel("BattleMenuPanel", frame, battleManager, BattleMenuPanel.getStandardMenu(), 1);
-		VictoryRewardsPanel victoryPanel = new VictoryRewardsPanel("VictoryRewardsPanel", frame, battleManager, VictoryRewardsPanel.getStandardMenu(), 2);
-		battleManager.changeDominantPanel(testMap);
-		testMap.checkAiTurn();
+		testMap.startBGM();
+//		battleManager.changeDominantPanel(testMap);
 		frame.refresh();
 	}
 	
 	public void setCoordinates (int avatarIndexY, int avatarIndexX) {
-		this.avatarIndexY = avatarIndexY;
-		this.avatarIndexX = avatarIndexX;
+		party.setAvatarIndexY(avatarIndexY);
+		party.setAvatarIndexX(avatarIndexX);
 	}
 	
 	private void checkTileTest() {
-		Tile tile = tileMap.getTile(avatarIndexY, avatarIndexX);
+		Tile tile = tileMap.getTile(party.getAvatarIndexY(), party.getAvatarIndexX());
 		String text = "";
 		if (tile.hasEvent()) {
 			Event event = tile.getEvent();
@@ -188,6 +305,16 @@ public class RegionMap extends GenericMap{
 		}
 		RegionInfoPanel infoPanel = manager.getInfoPanel();
 		infoPanel.displayText(text);
+	}
+	
+	private void walkingEvents() {
+		Tile tile = tileMap.getTile(party.getAvatarIndexY(), party.getAvatarIndexX());
+		if (tile.hasEvent()) {
+			MapEventManager event = tile.getEvent();
+			if (((MapEvent) event.getCurrentEvent()).getActivationMethod().equals("WALKING")) {
+				event.execute(this);
+			}
+		}
 	}
 	
 	public void keyReleased(KeyEvent e) {
@@ -198,5 +325,38 @@ public class RegionMap extends GenericMap{
 	public void restore() {
 		frame.add(this);
 		frame.setPanel(manager);
+	}
+
+	public void setManager(RegionPanelManager manager) {
+		this.manager = manager;
+	}
+	
+//	public RegionPanelManager getManager() {
+//		return manager;
+//	}
+	
+	@Override
+	public PanelManager getManager() {
+		return manager;
+	}
+
+	private BufferedImage getAnimationImage(String direction, int x) {
+		int y = 0;
+		switch (direction) {
+			case "left":
+				y = 0;
+				break;
+			case "down":
+				y = 1;
+				break;
+			case "up":
+				y = 2;
+				break;
+			case "right":
+				y = 3;
+				break;
+		}
+		BufferedImage image = avatarMoveAnimationImages.getSubimage(x * 32, y * 32, 32, 32);
+		return image;
 	}
 }

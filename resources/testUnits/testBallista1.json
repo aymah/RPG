@@ -26,7 +26,7 @@
 			"Subtype": "Targeted",
 			"Equipment Type": "Bow",
 			"Description": "The Ballista fires a large spear.",
-			"Priority": 1,
+			"Priority": -1,
 			"Range": 50,
 			"Strength Factor": 0.0,
 			"Stamina Cost": 0,

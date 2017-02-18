@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import unit.Party;
 import unit.Unit;
 import event.Ability;
 import event.GenericMenuItem;
@@ -82,8 +83,11 @@ public class BattleMenuPanel extends MenuPanel {
 			return;
 		}
 		int keyCode = e.getKeyCode();
+		if (((BattlePanelManager)manager).getBattleMap().isPartyPlacementMode() || ((BattlePanelManager)manager).getBattleMap().isArmyPlacementMode()) {
+			keyPressedPlacementMode(e);
+			keyCode = 0;
+		}
 		System.out.println(keyCode);
-		boolean moved = false;
 		switch (keyCode) {
 			case 87:
 			case 38:
@@ -105,6 +109,11 @@ public class BattleMenuPanel extends MenuPanel {
 			case 10:
 				selectItem();
 				break;
+			case 80:
+				closeAllMenus();
+				BattleMap bm = (BattleMap) manager.getDominantPanel();
+				bm.endTurn();
+				break;
 			case 81:
 			case 84:
 			case 27:
@@ -112,6 +121,33 @@ public class BattleMenuPanel extends MenuPanel {
 				break;
 		}
 		frame.refresh();
+	}
+	
+	public void keyPressedPlacementMode(KeyEvent e) {
+		int keyCode = e.getKeyCode();
+		switch (keyCode) {
+			case 87:
+			case 38:
+				moveUp();
+				setCurrItem();
+				break;
+			case 83:
+			case 40:
+				moveDown();
+				setCurrItem();
+				break;
+			case 69:
+			case 10:
+				selectItem();
+				break;
+		}
+	}
+	
+	private void setCurrItem() {
+		if (layer == 3)
+			((BattlePanelManager)manager).getBattleMap().setCurrUnit(selectorIndexY);
+		if (layer == 2)
+			((BattlePanelManager)manager).getBattleMap().setCurrSquad(selectorIndexY);
 	}
 	
 	private void moveUp() {
@@ -164,8 +200,7 @@ public class BattleMenuPanel extends MenuPanel {
 		}
 		removePanel();
 	}
-
-	
+		
 	public static List<MenuItem> getStandardMenu() {
 		List<MenuItem> menuItems = new ArrayList<MenuItem>();
 		MenuItem item = new MenuItem() {
@@ -183,23 +218,23 @@ public class BattleMenuPanel extends MenuPanel {
 			}
 		};
 		menuItems.add(item);
-		item = new MenuItem() {
-			private String name = "Free Select";
-			
-			@Override
-			public void execute(GamePanel panel) {
-				MenuPanel menuPanel = (MenuPanel) panel;
-				BattlePanelManager battleManager = (BattlePanelManager)menuPanel.getManager();
-				battleManager.getBattleMap().setFreeSelectMode();
-				menuPanel.closeMenu();
-			}
-
-			@Override
-			public String getName() {
-				return name;
-			}
-		};	
-		menuItems.add(item);
+//		item = new MenuItem() {
+//			private String name = "Free Select";
+//			
+//			@Override
+//			public void execute(GamePanel panel) {
+//				MenuPanel menuPanel = (MenuPanel) panel;
+//				BattlePanelManager battleManager = (BattlePanelManager)menuPanel.getManager();
+//				battleManager.getBattleMap().setFreeSelectMode();
+//				menuPanel.closeMenu();
+//			}
+//
+//			@Override
+//			public String getName() {
+//				return name;
+//			}
+//		};	
+//		menuItems.add(item);
 		item = new MenuItem() {
 			private String name = "End Turn";
 			
@@ -232,6 +267,12 @@ public class BattleMenuPanel extends MenuPanel {
 	
 	public MenuItem getMenuItem() {
 		return menuItems.get(selectorIndexY);
+	}
+
+
+	public void resetSelector() {
+		selectorIndexY = 0;
+		selectorIndexX = 0;
 	}
 
 

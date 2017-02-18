@@ -1,5 +1,10 @@
 package event;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +40,14 @@ public class Ability extends GenericMenuItem {
 		}
 	}
 
+	private List<Effect> getAllEffectsList() {
+		List<Effect> effectList = new ArrayList<Effect>();
+		for (String key: effects.keySet()) {
+			effectList.addAll(effects.get(key));
+		}
+		return effectList;
+	}
+
 	@Override
 	public String getName() {
 		return name;
@@ -52,7 +65,7 @@ public class Ability extends GenericMenuItem {
 		return (Integer)params.get("Priority");
 	}
 	
-	public int getStamCost(Unit unit) {
+	public synchronized int getStamCost(Unit unit) {
 		int cost = 0;
 		if (params.get("Stamina Cost") != null) 
 			cost = (int)params.get("Stamina Cost");
@@ -66,13 +79,12 @@ public class Ability extends GenericMenuItem {
 		return cost;
 	}
 	
-	public int getMPCost(Unit unit) {
+	public synchronized int getMPCost(Unit unit) {
 		int cost = 0;
 		if(params.get("MP Cost") != null)
 			cost = (int)params.get("MP Cost");
 		if (effects.get("MP Cost") != null) {
 			List<Effect> effectList = effects.get("MP Cost");
-			System.out.println(effectList.size());
 			effectList.sort(Effect.getComparator());
 			for (Effect effect: effectList) {
 				cost = (int)(effect.modifyValue((double)cost, unit));
@@ -91,7 +103,7 @@ public class Ability extends GenericMenuItem {
 //		return cost;
 //	}
 	
-	public int getRange() {
+	public synchronized int getRange() {
 		int range = (int)params.get("Range");
 		if (effects.get("Range") != null) {
 			List<Effect> effectList = effects.get("Range");
@@ -103,9 +115,13 @@ public class Ability extends GenericMenuItem {
 		return range;
 	}
 	
-	public int calculateDamage(Unit attacker) {
-		return (int)Math.round((attacker.getCurrStrength() * getStrengthFactor(attacker)) +
-								attacker.getCurrMagic() * getMagicFactor(attacker));
+	public int calculateDamage(Unit attacker, Unit defender) {
+		double rawDamage = (attacker.getCurrStrength() * getStrengthFactor(attacker)) +
+				attacker.getCurrMagic() * getMagicFactor(attacker);
+		double adjustedDamage = rawDamage * (1 - defender.getTotalAbsorption());
+		if (!defender.inLeadership())
+			adjustedDamage *= 1.5;
+		return (int) Math.round(adjustedDamage);
 //		int damage = 0;
 //		if (effects.containsKey("Damage")) {
 //			List<Effect> effectList = effects.get("Damage");
@@ -123,10 +139,31 @@ public class Ability extends GenericMenuItem {
 
 	}
 	
+	public int calculateArmorDamage(Unit attacker) {
+		return getArmorDamage(attacker);
+	}
+	
+	public int getArmorDamage(Unit unit) {
+		double armorDamage = 0;
+		if (params.containsKey("Armor Damage"))
+			armorDamage = (double)params.get("Armor Damage");
+		if (effects.get("Armor Damage") != null) {
+			List<Effect> effectList = effects.get("Armor Damage");
+			effectList.sort(Effect.getComparator());
+			for (Effect effect: effectList) {
+				armorDamage = (double)effect.modifyValue((double)armorDamage, unit);
+			}
+		}
+		return (int)armorDamage;
+	}
+	
 	public int dealDamage(Unit attacker, Unit defender) {
 		if (defender != null) {
-			int damage = this.calculateDamage(attacker);
+			int damage = this.calculateDamage(attacker, defender);
+			int armorDamage = this.calculateArmorDamage(attacker);
 			defender.takeDamage(damage);
+			defender.takeArmorDamage(armorDamage);
+//			defender.aggro();
 			return damage;
 		}
 		return 0;
@@ -136,6 +173,7 @@ public class Ability extends GenericMenuItem {
 		Map<String, List<Effect>> newEffects = createNewEffects(attacker);
 		if (defender != null) {
 			Map<String, List<Effect>> effects = this.getEffects("Type", "Stat Enemy Modifier");
+			Effect.addEffects(effects, this.getEffects("Type", "Status Enemy Modifier"));
 			Effect.addEffects(effects, newEffects);
 			if (effects != null) {
 				defender.addEffects(effects);
@@ -146,13 +184,15 @@ public class Ability extends GenericMenuItem {
 	private Map<String, List<Effect>> createNewEffects(Unit attacker) {
 		Map<String, List<Effect>> newEffects = new HashMap<String, List<Effect>>();
 		Map<String, List<Effect>> effects = this.getEffects("Type", "Create Stat Enemy Modifier");
+		Effect.addEffects(effects, this.getEffects("Type", "Create Status Enemy Modifier"));
+
 		for (String key: effects.keySet()) {
-			System.out.println("creating effect...");
 			List<Effect> effectList = effects.get(key);
 			List<Effect> newEffectList = new ArrayList<Effect>();
 			for (Effect effect: effectList) {
 				Map<String, Object> effectParams = new HashMap<String, Object>();
 				Map<String, Object> oldParams = effect.getParams();
+				System.out.println("effect " + effect.get("Name") + " " + effect.get("Type"));
 				for (String objectKey: oldParams.keySet()) {
 					Object param = oldParams.get(objectKey);
 					if (objectKey.equals("Modify Value")) {
@@ -163,12 +203,15 @@ public class Ability extends GenericMenuItem {
 					}
 					if (objectKey.equals("Modify Multiplier"))
 						param = "Apply Once";
-					if (objectKey.equals("Type"))
+					if (objectKey.equals("Type") && effect.get("Type").equals("Create Stat Enemy Modifier"))
 						param = "Stat Enemy Modifier"; //might be useful to change to stat self modifier and remove the enemy connotation when adding effects in general
+					if (objectKey.equals("Type") && effect.get("Type").equals("Create Status Enemy Modifier"))
+						param = "Status Enemy Modifier";
+					if (objectKey.equals("Origin"))
+						param = "Created";
 					effectParams.put(objectKey, param);
 				}
 				Effect newEffect = new Effect(effectParams);
-				System.out.println("effect created!");
 				newEffectList.add(newEffect);
 			}
 			newEffects.put(key, newEffectList);
@@ -183,7 +226,9 @@ public class Ability extends GenericMenuItem {
 	}
 
 	public int getLevel() {
-		return (int)params.get("Level");
+		if (params.containsKey("Level"))
+			return (int)params.get("Level");
+		return -1;
 	}
 	
 	public int getMaxLevel() {
@@ -215,7 +260,7 @@ public class Ability extends GenericMenuItem {
 		return effects;
 	}
 	
-	public double getStrengthFactor(Unit unit) {
+	public synchronized double getStrengthFactor(Unit unit) {
 		double strengthFactor = 0;
 		if (params.containsKey("Strength Factor"))
 			strengthFactor = (double)params.get("Strength Factor");
@@ -229,7 +274,7 @@ public class Ability extends GenericMenuItem {
 		return strengthFactor;
 	}
 	
-	public double getMagicFactor(Unit unit) {
+	public synchronized double getMagicFactor(Unit unit) {
 		double magicFactor = 0;
 		if (params.containsKey("Magic Factor"))
 			magicFactor = (double)params.get("Magic Factor");
@@ -284,13 +329,45 @@ public class Ability extends GenericMenuItem {
 		return params.get(field);
 	}
 
-	public int calculateAddedStamina(Unit unit) {
+	public synchronized int calculateAddedStamina(Unit unit) {
 		List<Effect> effectList = effects.get("Stamina");
-		effectList.sort(Effect.getComparator());
 		double value = 0;
-		for (Effect effect: effectList) {
-			value = effect.modifyValue(value, unit);
+		if (effectList != null) {
+			effectList.sort(Effect.getComparator());
+			for (Effect effect: effectList) {
+				value = effect.modifyValue(value, unit);
+			}
 		}
 		return (int)value;
+		
 	}
+	
+	public void printEffects() {
+		for (String key: effects.keySet()) {
+			for (Effect effect: effects.get(key)) {
+				System.out.println(name + " : " + effect.get("Name"));
+			}
+		}
+	}
+
+	public Ability copy() {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutputStream oos;
+		try {
+			oos = new ObjectOutputStream(bos);
+			oos.writeObject(this);
+			oos.flush();
+			oos.close();
+			bos.close();
+			byte[] byteData = bos.toByteArray();
+			
+			ByteArrayInputStream bais = new ByteArrayInputStream(byteData);
+			return (Ability)new ObjectInputStream(bais).readObject();
+		} catch (IOException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 }

@@ -5,13 +5,14 @@ import map.GamePanel;
 import map.GenericMap;
 import map.RegionMap;
 
-public class Corridor implements Event {
+public class Corridor extends MapEvent {
 
 		private String destination;
 		private int destIndexY;
 		private int destIndexX;
 		
-		public Corridor(String destination, int destIndexY, int destIndexX) {
+		public Corridor(String destination, int destIndexY, int destIndexX, String activationMethod, Switch s) {
+			super(activationMethod, s);
 			this.destination = destination;
 			this.destIndexY = destIndexY;
 			this.destIndexX = destIndexX;

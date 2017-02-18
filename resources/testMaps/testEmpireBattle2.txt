@@ -1,0 +1,9 @@
+UNIT Swordsman ENEMY M'1 0 9 19
+UNIT Swordsman ENEMY M'2 0 10 19
+UNIT Swordsman ENEMY M'3 0 9 20
+UNIT Swordsman ENEMY M'4 0 10 20
+UNIT Crossbowman ENEMY A'1 0 1 15
+UNIT Crossbowman ENEMY A'2 0 8 16
+REWARD 1000 1000
+MEELESPACE 3
+BGM testBattleBGM2

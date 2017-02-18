@@ -3,10 +3,27 @@ package misc;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 import unit.Hero;
 import unit.Party;
@@ -14,20 +31,26 @@ import unit.Unit;
 import event.Ability;
 import event.MenuItem;
 import map.BattlePanelManager;
+import map.EmpireInfoPanel;
+import map.EmpireMap;
+import map.EmpirePanelManager;
 import map.GameFrame;
 import map.GamePanel;
+import map.GameStateManager;
 import map.GraphicsConstants;
 import map.MenuPanel;
 import map.RegionInfoPanel;
 import map.RegionMap;
-import map.RegionMenuPanel;
+import map.ExploreMenuPanel;
 import map.RegionPanelManager;
 
 public class StartMenuPanel extends MenuPanel {
 	
     private int selectorIndexX;
 	private int selectorIndexY;
-	
+	private String bgmName;
+	private Clip bgm;
+
     public StartMenuPanel(String name, GameFrame frame, StartPanelManager manager, List<MenuItem> menuItems, int layer) {
 		super(menuItems, layer);
 		this.manager = manager;
@@ -37,6 +60,8 @@ public class StartMenuPanel extends MenuPanel {
 		this.frame = frame;	
 		this.selectorIndexX = 0;
 		this.selectorIndexY = 0;
+		loadBGM("testStartMenuBGM");
+		startBGM();
 	}
 	
 	@Override
@@ -48,6 +73,14 @@ public class StartMenuPanel extends MenuPanel {
         Color bgColor = new Color(0,0,0);
         g2d.setColor(bgColor);
         g2d.fillRect(0, 0, GraphicsConstants.FRAME_WIDTH, GraphicsConstants.FRAME_HEIGHT);
+//        BufferedImage img = null;
+//		try {
+//			img = ImageIO.read(new File("/Users/andrewmah/Downloads/testimage.jpg"));
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//        g2d.drawImage(img, 0, 0, GraphicsConstants.FRAME_WIDTH, GraphicsConstants.FRAME_HEIGHT, 0, 0, GraphicsConstants.FRAME_WIDTH, GraphicsConstants.FRAME_HEIGHT, null);
         drawMenu(g2d);
 	}
 	
@@ -111,7 +144,8 @@ public class StartMenuPanel extends MenuPanel {
 			
 			@Override
 			public void execute(GamePanel panel) {
-
+				StartMenuPanel menuPanel = (StartMenuPanel)panel;
+				menuPanel.loadGame();
 			}
 
 			@Override
@@ -127,6 +161,21 @@ public class StartMenuPanel extends MenuPanel {
 			public void execute(GamePanel panel) {
 				StartMenuPanel menuPanel= (StartMenuPanel)panel;
 				menuPanel.startGame();
+			}
+
+			@Override
+			public String getName() {
+				return name;
+			}
+		};
+		menuItems.add(item);
+		item = new MenuItem() {
+			private String name = "Start Empire Test";
+			
+			@Override
+			public void execute(GamePanel panel) {
+				StartMenuPanel menuPanel= (StartMenuPanel)panel;
+				menuPanel.startEmpireTest();
 			}
 
 			@Override
@@ -156,23 +205,107 @@ public class StartMenuPanel extends MenuPanel {
 		frame.removeAll();
         RegionPanelManager manager = new RegionPanelManager(frame);
         Party party = new Party();
-        Hero hero = new Hero("Leader", "ALLY", "L", party);
+        Hero hero = new Hero("Renalt", "ALLY", "Renalt", party);
         party.addUnit(hero);
-        hero = new Hero("Wizard", "ALLY", "W", party);
+        hero = new Hero("Sarana", "ALLY", "Sarana", party);
         party.addUnit(hero);
-        hero = new Hero("Tank", "ALLY", "T", party);
+        hero = new Hero("Zell", "ALLY", "Zell", party);
         party.addUnit(hero);
-        hero = new Hero("Scout", "ALLY", "S", party);
+        hero = new Hero("Fox", "ALLY", "Fox", party);
         party.addUnit(hero);
-        Unit unit = new Unit("testManAtArms1", "ALLY", "M1", party);
-        party.addUnit(unit);
-        unit = new Unit("testManAtArms1", "ALLY", "M2", party);
-        party.addUnit(unit);
         RegionMap panel = new RegionMap("testMap", frame, manager, party);
+        party.addGold(2000);
+        stopBGM();
+        panel.startBGM();
         panel.setCoordinates(1,1);
+        GameStateManager gameStateManager = new GameStateManager();
+        party.setGameStateManager(gameStateManager);
         RegionInfoPanel infoPanel = new RegionInfoPanel("testInfoPanel", frame, manager);
-        RegionMenuPanel menuPanel = new RegionMenuPanel("testMenuPanel", frame, manager, RegionMenuPanel.getStandardMenu(), 1);
+        ExploreMenuPanel menuPanel = new ExploreMenuPanel("testMenuPanel", frame, manager, null, 1, ExploreMenuPanel.getStandardMenu(), 0);
         manager.setDominantPanel(panel);
         frame.refresh();
+	}
+	
+	public void loadGame() {
+		Party party = null;
+		try {
+//			InputStream saveFile = getClass().getClassLoader().getResourceAsStream("/saves/testSave.sav");
+			FileInputStream saveFile = new FileInputStream(System.getProperty("user.home")+"/saves/testSave.sav");
+			ObjectInputStream restore = new ObjectInputStream(saveFile);
+			party = (Party)restore.readObject();
+		} catch (IOException | ClassNotFoundException e) {
+			return;
+		}
+		frame.removeAll();
+	    RegionPanelManager manager = new RegionPanelManager(frame);
+	    RegionMap panel = (RegionMap)party.getGameStateManager().getMap(party.getMapName());
+	    if (panel == null) {
+			panel = new RegionMap(party.getMapName(), frame, manager, party);
+	    }
+	    stopBGM();
+	    panel.startBGM();
+	    panel.setManager(manager);
+	    panel.setFrame(frame);
+	    panel.restoreMap();
+	    panel.setCoordinates(party.getAvatarIndexY(),party.getAvatarIndexX());
+	    RegionInfoPanel infoPanel = new RegionInfoPanel("testInfoPanel", frame, manager);
+	    ExploreMenuPanel menuPanel = new ExploreMenuPanel("testMenuPanel", frame, manager, null, 1, ExploreMenuPanel.getStandardMenu(), 0);
+	    manager.setDominantPanel(panel);
+	    frame.refresh();
+	}
+	
+	private void startEmpireTest() {
+		frame.removeAll();
+        EmpirePanelManager manager = new EmpirePanelManager(frame);
+        Party party = new Party();
+        Hero hero = new Hero("Renalt", "ALLY", "Renalt", party);
+        party.addUnit(hero);
+        hero = new Hero("Sarana", "ALLY", "Sarana", party);
+        party.addUnit(hero);
+        hero = new Hero("Zell", "ALLY", "Zell", party);
+        party.addUnit(hero);
+        hero = new Hero("Fox", "ALLY", "Fox", party);
+        party.addUnit(hero);
+//        Unit unit = new Unit("Swordsman", "ALLY", "Swordsman 1", party);
+//        party.addUnit(unit);
+//        unit = new Unit("Swordsman", "ALLY", "Swordsman 2", party);
+//        party.addUnit(unit);
+        EmpireMap panel = new EmpireMap("testEmpireMap", frame, manager, party);
+        stopBGM();
+        panel.startBGM();
+        panel.setCoordinates(1,1);
+        GameStateManager gameStateManager = new GameStateManager();
+        party.setGameStateManager(gameStateManager);
+        EmpireInfoPanel infoPanel = new EmpireInfoPanel("empireInfoPanel", frame, manager);
+        ExploreMenuPanel menuPanel = new ExploreMenuPanel("testMenuPanel", frame, manager, null, 1, ExploreMenuPanel.getStandardMenu(), 0);
+        manager.setDominantPanel(panel);
+        frame.refresh();
+	}
+	
+	private void startBGM() {
+		if (bgm == null)
+			loadBGM(bgmName);
+		bgm.setFramePosition(0);
+		bgm.loop(Clip.LOOP_CONTINUOUSLY);
+	}
+	
+	private void loadBGM(String filename) {
+		try {
+	    	InputStream in = StartGame.class.getResourceAsStream("/testSounds/" + filename + ".wav"); 
+	    	BufferedInputStream bin = new BufferedInputStream(in);
+	    	AudioInputStream audioIn = AudioSystem.getAudioInputStream(bin);
+	    	bgm = AudioSystem.getClip();
+	    	bgm.open(audioIn);
+	        FloatControl gainControl = (FloatControl) bgm.getControl(FloatControl.Type.MASTER_GAIN);
+	        gainControl.setValue(-20.0f);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public void stopBGM() {
+    	if (bgm.isRunning()) bgm.stop();
 	}
 }

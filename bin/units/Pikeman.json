@@ -1,0 +1,41 @@
+{ 
+	"Class": "Pikeman",
+	"Level": 0,
+	"Behavior": "Attack",
+	"Supply Cost": 1,
+	"Constitution": 3,
+	"Image": "testManAtArms",
+	"Base Stats": {
+		"HP": 700,
+		"Strength": 75,
+		"Movement": 3,
+		"Initiative": 100,
+		"Stamina": 300
+	},
+	"Per Level Stats": {
+		"HP": 110,
+		"Strength": 12,
+		"Movement": 0,
+		"Initiative": 0,
+		"Stamina": 10
+	},
+	"Equipment": {
+		"Sword" : "Bronze Lance",
+		"Armor" : "Bronze Breastplate",
+		"Helm" : "Bronze Helm"
+	},
+	"Abilities": [
+		{ 
+			"Name": "Lance Attack",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Equipment Type": "Lance",
+			"Description": "The pikeman stabs the enemy with his lance.",
+			"Priority": 1,
+			"Range": 1,
+			"Strength Factor": 0.0,
+			"Stamina Cost": 0,
+			"Effects": []
+		}
+	]
+}

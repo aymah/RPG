@@ -28,11 +28,41 @@ public class MenuPanel extends LayeredPanel {
 		if (superMenu != null) {
 			superMenu.subMenu = null;
 		} else {
-			manager.changeDominantPanel(manager.getLastPanel());
+			manager.changeDominantPanelToPrevious();
 		}
 		frame.repaint();
 		frame.refresh();
 	}
+	
+//	public void closeAllMenus() {
+//		closeAllSubMenus();
+//		closeMenu();
+//	}
+//	
+	public void closeAllMenus() {
+		closeMenu();
+		if (superMenu != null) {
+			superMenu.closeAllMenus();
+		}
+	}
+	
+	public MenuPanel closeAllSubMenus() {
+		MenuPanel menu = this;
+		if (superMenu != null) {
+			menu = superMenu.closeAllSubMenus();
+			closeMenu();
+		}
+		return menu;
+	}
+
+	
+//	public void closeAllSubMenus() {
+//		MenuPanel baseMenu = this;
+//		while (baseMenu.superMenu != null) {
+//			baseMenu = baseMenu.superMenu;
+//		}
+//		baseMenu.clearSubMenus();
+//	}
     
     protected static MenuItem exitMenuItem() {
     	MenuItem item = new MenuItem() {
@@ -60,7 +90,7 @@ public class MenuPanel extends LayeredPanel {
     	}
     }
     
-    protected PanelManager getManager() {
+    public PanelManager getManager() {
     	return manager;
     }
 }

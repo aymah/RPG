@@ -1,0 +1,11 @@
+UNIT Pikeman ENEMY P'1 0 9 19
+UNIT Pikeman ENEMY P'2 0 10 19
+UNIT Pikeman ENEMY P'3 0 9 20
+UNIT Crossbowman ENEMY A'1 0 1 15
+UNIT Crossbowman ENEMY A'2 0 8 16
+UNIT Crossbowman ENEMY A'3 0 10 20
+REWARD 1200 1200 
+TECHREWARD Lance Technology
+PROVREWARD Axheimton
+MEELESPACE 3
+BGM testBattleBGM2

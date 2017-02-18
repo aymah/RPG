@@ -2,25 +2,31 @@
 12
 24
 
-A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 
-A02 z01 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 z01 A02 
-A02 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 A02 
-A02 a00 a01 A02 a01 a00 A02 a00 a01 A02 a01 a00 A02 a00 a01 A02 a01 a00 A02 a00 a01 A02 a01 A02 
-A02 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 z01 A02 
-z00 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 A02 
-z00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 A02 
-A02 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 z01 A02 
-A02 a01 a00 A02 a00 a01 A02 a01 a00 A02 a00 a01 A02 a01 a00 A02 a00 a01 A02 a01 a00 A02 a00 A02 
-A02 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 A02 
-A02 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 a01 z01 A02 
-A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02
+A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 
+A14,19 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 z00,02 a03,16 a03,16 z00,02 z03,22 A14,19 
+A14,19 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 A14,19 A14,19 a03,16 A14,19 A14,19 A14,19 
+A14,19 a03,16 a03,16 A14,19 a03,16 a03,16 A14,19 a03,16 a03,16 A14,19 a03,16 a03,16 A14,19 a03,16 a03,16 A14,19 a03,16 a03,16 A14,19 A14,19 z00,02 A14,19 A14,19 A14,19 
+A14,19 z00,02 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 A14,19 A14,19 a03,16 a03,16 z03,22 A14,19 
+z03,12 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 A14,19 A14,19 a03,16 A14,19 A14,19 A14,19 
+z03,12 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 A14,19 A14,19 a03,16 A14,19 A14,19 A14,19 
+A14,19 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 A14,19 A14,19 a03,16 a03,16 z03,22 A14,19 
+A14,19 a03,16 a03,16 A14,19 a03,16 a03,16 A14,19 a03,16 a03,16 A14,19 a03,16 a03,16 A14,19 a03,16 a03,16 A14,19 a03,16 a03,16 A14,19 A14,19 a03,16 A14,19 A14,19 A14,19 
+A14,19 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 A14,19 A14,19 a03,16 A14,19 A14,19 A14,19 
+A14,19 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 a03,16 A14,19 A14,19 a03,16 a03,16 z03,22 A14,19 
+A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19
 
-EVENT ENCOUNTER testBattle
-EVENT ENCOUNTER Series1Battle1
-EVENT ENCOUNTER Series1Battle2
-EVENT CORRIDOR testMap 4 11
-EVENT CORRIDOR testMap 5 11
-EVENT ENCOUNTER Series1Battle3
-EVENT ENCOUNTER Series1Battle4
+TILESET villageLight
+BGM testRegionBGM1
+# EVENT ENCOUNTER testBattle
+EVENT MESSAGE PERMANENT WALKING Before fighting any battles, you should learn a little bit about which ones you should fight... The battles are meant to be fought from top to bottom, and if you choose to ignore this... well sucks to be you. Keep in mind that you can only fight battles once, and that losing a battle will result in losing the game, and being returned to the menu screen.
+EVENT MESSAGE PERMANENT WALKING Welcome to the first battle! Before entering this battle, there's a few things you should know. You have 4 heroes in this game: (L)eader, (W)izard, (T)ank, and (S)cout. In the short term, all you need to know is that Tank is meele only, and Wizard and Scout are primarily ranged. You also have access to two Generic Units. You can open your menu to change which of these you are taking to battle. Access the menu with the T button and change your party layout by selecting the Manage Party tab. You can also save, load and quit in the menu. The rest of the items in the menu are useless at the moment and will be reviewed after the first fight. Navigating the menu is pretty straight foward: The selected item is highlighted in red and you can move the selector with W and S. Hit E to select the menu item, and Q to go back to the previous screen.
+EVENT ENCOUNTER PERMANENT ACTIVATION Series1Battle1
+EVENT MESSAGE PERMANENT WALKING Congratulations on winning your first battle! Er, well if you followed directions anyways. I will now teach you how to utilize the spoils of war: Stat Points and Gold. We'll start with Gold since it's simpler. You use gold for 2 major things: Purchasing equipment for your Heroes and upgrading your Generic Units/Army. Equipment right now just involves upgrading the equipment that already exists. Boots and Armor are fairly self explanatory (Movement Cost on armor is the + to the cost of moving in battle, the base 5 stamina), but weapons are a little more complicated. Weapons add Strength factor to all abilities that utilize them. You can check to see if an ability utilizes a weapon by hovering over the ability in either the skill menu outside of battle or the attack menu in battle. Upgrading your Generic Units comes in two forms: One is upgrading the strength of each unit of a type, done in the Upgrade Troops tab. The other is increasing the number of units of the type your army can field, which is done in Manage Army. Although managing your army seems weak, keep in mind that there is more than one type of Encounter... the Cyan squares you went to are for Party Battles, in which only your party partakes. An Orange square contains an Army battle, in which your Army participates. So don't neglect building up your army for that fight...
+EVENT MESSAGE PERMANENT WALKING Of course, you can always take the Corridor to the left back to the original room. There isn't anything but a few messages there though. Go ahead and go to the right, where you will find some Cyan squares (Encounters).
+EVENT ENCOUNTER PERMANENT ACTIVATION Series1Battle2
+EVENT CORRIDOR PERMANENT ACTIVATION testMap 4 11
+EVENT CORRIDOR PERMANENT ACTIVATION testMap 5 11
+EVENT ENCOUNTER PERMANENT ACTIVATION Series1Battle3
+EVENT ENCOUNTER PERMANENT ACTIVATION Series1Battle4
 
 

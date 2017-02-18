@@ -1,0 +1,15 @@
+{
+	"Name": "Sword Technology",
+	"Units Enabled": [
+			"Swordsman"
+	],
+	"Items Enabled": [
+			"Bronze Sword",
+			"Iron Sword",
+			"Steel Sword",
+			"Mithril Sword"
+	],
+	"Buildings Enabled": [
+			"Barracks"
+	]
+}

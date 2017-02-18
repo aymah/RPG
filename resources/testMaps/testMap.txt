@@ -2,16 +2,22 @@
 10
 12
 
-A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 
-A02 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 A02 
-A02 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 A02  
-A02 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 A02  
-A02 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 z00 
-A02 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 z00 
-A02 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 A02  
-A02 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 A02  
-A02 a01 a00 a01 a00 a01 a00 a01 a00 a01 a00 A02  
-A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02 A02  
+A18,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A12,22 
+A18,20 a14,16 a15,16 a15,16 a15,16 a15,16 a15,16 a15,16 a15,16 a15,16 a15,16 A18,20 
+A18,20 z00,02 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 A18,20  
+A18,20 a14,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 z00,02 A18,20  
+A18,20 a14,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 z03,12
+A18,20 a14,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 z03,12
+A18,20 a14,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 A18,20  
+A18,20 a14,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 A18,20  
+A18,20 a14,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 a13,17 A18,20  
+A18,22 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A14,19 A16,19  
 
-EVENT CORRIDOR testMap2 5 0
-EVENT CORRIDOR testMap2 6 0
+TILESET villageLight
+BGM testRegionBGM1
+#EVENT eventType activationMethod switchType (changeIndex, on, off, toggle, permanent) switchActivation (complete, win, etc) eventSpecificDetails 
+EVENT MESSAGE CHANGE COMPLETE 1 WALKING Hi, welcome to Aesuria's Crusade (Working Title)! This is going to be a short tutorial to bring you up to speed on how to play the game. Please forgive the awful formatting, as they say we just don't have the technology. Use WASD to move around. The yellow squares you will see scattered around represent additional Tutorial messages. Please walk over them to learn how to play the game. You can also activate these with the E key. You can exit these messages by pressing Q.
+CHAIN MESSAGE CHANGE COMPLETE 0 ACTIVATION This is a test of chaining events! Nice that it worked.
+EVENT MESSAGE PERMANENT WALKING Other colors of squares are important too. You've probably noticed that you can walk on all the grey squares, but the blue ones are not accessable. In addition to these, there are also magenta and cyan squares. These are important squares that contain activatable events. Move over these events and press E to trigger the events. Magenta squares are "Corridors" to another map, and Cyan squares are "Encounters" that take you to a battle. Make sure you are prepared before triggering an Encounter, as there is no way out but to finish the battle... You should go ahead and proceed through the Corridor to the right.
+EVENT CORRIDOR PERMANENT ACTIVATION testMap2 5 0
+EVENT CORRIDOR PERMANENT ACTIVATION testMap2 6 0
