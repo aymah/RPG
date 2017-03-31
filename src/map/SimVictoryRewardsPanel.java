@@ -20,6 +20,7 @@ import event.MenuItem;
 
 public class SimVictoryRewardsPanel extends MenuPanel{
 
+	private List<String> battleLog;
 	private int selectorIndexX;
 	private int selectorIndexY;
 	private int expReward;
@@ -27,12 +28,13 @@ public class SimVictoryRewardsPanel extends MenuPanel{
 	private String techReward;
 	private String provReward;
 	private int levelDiff = 0;
+	private static final int BATTLE_LOG_LINE_DISPLAY_NUM = 20;
 	
 	public SimVictoryRewardsPanel(String name, GameFrame frame, EmpirePanelManager manager, List<MenuItem> menuItems, int layer) {
 		super(menuItems, layer);
 		manager.setSimVictoryPanel(this);
 		this.manager = manager;
-		this.setBounds(100, 100, 600, 400);
+		this.setBounds(0, 0, GraphicsConstants.FRAME_WIDTH, GraphicsConstants.FRAME_HEIGHT);
 		this.name = name;
 		this.frame = frame;
 		expReward = 0;
@@ -49,18 +51,19 @@ public class SimVictoryRewardsPanel extends MenuPanel{
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
             RenderingHints.VALUE_ANTIALIAS_ON);
-        Color bgColor = new Color(100,100,0);
+        Color bgColor = new Color(0,0,0);
         g2d.setColor(bgColor);
-        g2d.fillRect(0, 0, 600, 400);
+        g2d.fillRect(0, 0, GraphicsConstants.FRAME_WIDTH, GraphicsConstants.FRAME_HEIGHT);
         drawMenu(g2d);
         drawVictoryRewards(g2d);
+        drawBattleLog(g2d);
     }
     
     private void drawMenu(Graphics2D g2d) {
     	for (int i = 0; i < menuItems.size(); i++) {
-            g2d.setColor(new Color(255,255,255));
-            if (selectorIndexY == i)
-            	g2d.setColor(new Color(255,0,0));
+//            g2d.setColor(new Color(255,255,255));
+//            if (selectorIndexY == i)
+            g2d.setColor(new Color(255,0,0));
     		g2d.drawString(menuItems.get(i).getName(), 10, 390 + i * 30);
     	}
     }
@@ -87,6 +90,21 @@ public class SimVictoryRewardsPanel extends MenuPanel{
 		g2d.drawString("Current EXP: " + hero.getExp(), 300, 155);
 		g2d.drawString("EXP to next Level: " + hero.getToNextLevel(), 300, 180);
 		g2d.drawString("Stat Points: " + hero.getStatPoints(), 300, 205);
+		
+    }
+    
+    private void drawBattleLog(Graphics2D g2d) {
+    	g2d.setFont(new Font("Dialog", Font.PLAIN, 16));
+    	g2d.setColor(new Color(255,255,255));
+    	for (int i = selectorIndexY; i < selectorIndexY + BATTLE_LOG_LINE_DISPLAY_NUM; i++) {
+    		g2d.drawString(battleLog.get(i), 550, 40 + (i - selectorIndexY) * 20);
+    	}
+    	
+    	
+		g2d.setColor(new Color(255,255,255));
+		g2d.fillRect(525, 20, 4, 20 * BATTLE_LOG_LINE_DISPLAY_NUM);
+		g2d.setColor(new Color(255,0,0));
+		g2d.fillRect(525, (int) (20 + (20 * (BATTLE_LOG_LINE_DISPLAY_NUM - 1) * ((double)selectorIndexY/(double)(battleLog.size() - BATTLE_LOG_LINE_DISPLAY_NUM)))), 4, 20);
     }
     
 	public void keyPressed(KeyEvent e) {
@@ -120,13 +138,13 @@ public class SimVictoryRewardsPanel extends MenuPanel{
 	private void moveUp() {
 		selectorIndexY--;
 		if (selectorIndexY < 0)
-			selectorIndexY = menuItems.size() - 1;
+			selectorIndexY = 0;
 	}
 	
 	private void moveDown() {
 		selectorIndexY++;
-		if (selectorIndexY >= menuItems.size())
-			selectorIndexY = 0;
+		if (selectorIndexY >= battleLog.size() - BATTLE_LOG_LINE_DISPLAY_NUM)
+			selectorIndexY = battleLog.size() - BATTLE_LOG_LINE_DISPLAY_NUM;
 	}
 	
 	private void selectItem() {
@@ -173,5 +191,10 @@ public class SimVictoryRewardsPanel extends MenuPanel{
 			levelDiff = hero.getLevel() - level;
 		}
 	}
+	
+	public void setBattleLog(List<String> battleLog) {
+		this.battleLog = battleLog;
+	}
+	
 }
 

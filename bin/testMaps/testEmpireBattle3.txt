@@ -5,6 +5,7 @@ UNIT Crossbowman ENEMY A'1 0 1 15
 UNIT Crossbowman ENEMY A'2 0 8 16
 UNIT Crossbowman ENEMY A'3 0 10 20
 REWARD 1200 1200 
+# Might want to add Tech rewards to the province itself, for the most part?
 TECHREWARD Lance Technology
 PROVREWARD Axheimton
 MEELESPACE 3

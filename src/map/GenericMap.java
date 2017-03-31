@@ -34,6 +34,7 @@ import unit.Unit;
 import unit.UnitFactory;
 import event.Corridor;
 import event.Encounter;
+import event.EnterProvince;
 import event.Event;
 import event.MapEventManager;
 import event.MapEvent;
@@ -242,7 +243,13 @@ public abstract class GenericMap extends GamePanel {
 			eventList.add(makeEvent(scanner));
 		} else if (type.equals("ENTERBASE")) {
 			String activationMethod = scanner.next();
-			MapEvent event = new EnterBase(activationMethod, s);
+			String provinceName = scanner.next();
+			MapEvent event = new EnterBase(activationMethod, s, party.getEmpire().getProvince(provinceName));
+			return event;
+		} else if (type.equals("ENTERPROVINCE")) {
+			String activationMethod = scanner.next();
+			String provinceName = scanner.next();
+			MapEvent event = new EnterProvince(activationMethod, s, party.getEmpire().getProvince(provinceName));
 			return event;
 		}
 			

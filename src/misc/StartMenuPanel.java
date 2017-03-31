@@ -39,6 +39,7 @@ import map.GamePanel;
 import map.GameStateManager;
 import map.GraphicsConstants;
 import map.MenuPanel;
+import map.ProvinceMenuPanel;
 import map.RegionInfoPanel;
 import map.RegionMap;
 import map.ExploreMenuPanel;
@@ -273,11 +274,12 @@ public class StartMenuPanel extends MenuPanel {
         EmpireMap panel = new EmpireMap("testEmpireMap", frame, manager, party);
         stopBGM();
         panel.startBGM();
-        panel.setCoordinates(1,1);
+        panel.setCoordinates(8,6);
         GameStateManager gameStateManager = new GameStateManager();
         party.setGameStateManager(gameStateManager);
         EmpireInfoPanel infoPanel = new EmpireInfoPanel("empireInfoPanel", frame, manager);
         ExploreMenuPanel menuPanel = new ExploreMenuPanel("testMenuPanel", frame, manager, null, 1, ExploreMenuPanel.getStandardMenu(), 0);
+        ProvinceMenuPanel provinceMenuPanel = new ProvinceMenuPanel("provinceMenuPanel", frame, manager, ProvinceMenuPanel.getStandardMenu(), 0);
         manager.setDominantPanel(panel);
         frame.refresh();
 	}

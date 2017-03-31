@@ -1,0 +1,80 @@
+{ 
+	"Class": "Foot Knight",
+	"Level": 0,
+	"Behavior": "Attack",
+	"Acquisition Range": 8,
+	"Supply Cost": 1,
+	"Constitution": 3,
+	"Image": "testManAtArms",
+	"Base Stats": {
+		"HP": 500,
+		"Strength": 130,
+		"Movement": 3,
+		"Initiative": 120,
+		"Stamina": 450
+	},
+	"Per Level Stats": {
+		"HP": 80,
+		"Strength": 17,
+		"Movement": 0,
+		"Initiative": 0,
+		"Stamina": 10
+	},
+	"Equipment": {
+		"Main Hand" : "Bronze Sword",
+		"Off Hand" : "Bronze Kite Shield",
+		"Helm" : "Bronze Helm",
+		"Armor" : "Bronze Breastplate"
+	},
+	"Abilities": [
+		{ 
+			"Name": "Sword Attack",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Equipment Type": "Sword",
+			"Description": "The Foot Knight slashes the enemy with his Sword.",
+			"Priority": -1,
+			"Range": 1,
+			"Strength Factor": 0.0,
+			"Stamina Cost": 0,
+			"Effects": []
+		},
+		{ 
+			"Name": "Power Strike",
+			"Type": "Active",
+			"Subtype": "Targeted",
+			"Equipment Type": "Sword",
+			"Description": "The Foot Knight raises his sword above his head and swings it down with tremendous force.",
+			"Priority": 3,
+			"Range": 1,
+			"Strength Factor": 1.0,
+			"Stamina Cost": 100,
+			"Level": 0,
+			"Max Level": 10,
+			"Effects": [
+				{
+					"Key": "Strength Factor",
+					"Name": "Power Strike Mastery",
+					"Description": "Every Level the Foot Knight has in this ability adds .2 to the Strength Factor of this ability",
+					"Type": "Ability Modifier",
+					"Modify Value": 0.2,
+					"Modify Type": "Additive",
+					"Modify Multiplier": "Ability Level",
+					"Modify Priority": 1,
+					"Origin": "Ability",
+				},
+				{
+					"Key": "Stamina Cost",
+					"Name": "Heavy Lifting",
+					"Description": "Every Level the Foot Knight has in this ability adds 5 to the Stamina Cost of this ability",
+					"Type": "Ability Modifier",
+					"Modify Value": 5.0,
+					"Modify Type": "Additive",
+					"Modify Multiplier": "Ability Level",
+					"Modify Priority": 1,
+					"Origin": "Ability",
+				},
+			]
+		},
+	]
+}

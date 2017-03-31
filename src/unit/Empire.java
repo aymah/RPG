@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import map.Coordinates;
 import misc.Factory;
 
 import org.json.JSONArray;
@@ -30,6 +31,7 @@ public class Empire implements Serializable {
 //	private List<BuildingFactory> buildingFactories;
 	private List<Building> buildings;
 	private List<Unit> unitList;
+	private List<Province> ownedProvinces;
 	private List<Province> provinces;
 	private int time;
 	private int manpower;
@@ -38,16 +40,26 @@ public class Empire implements Serializable {
 	public Empire(Party party) {
 		this.party = party;
 		this.unitList = new ArrayList<Unit>();
+		ownedProvinces = new ArrayList<Province>();
 		technologies = new ArrayList<Technology>();
 		buildings = new ArrayList<Building>();
-		provinces = new ArrayList<Province>();
 		manpower = 0;
 		time = 1;
 		readTechnologies();
 		readResources();
-		readProvinces();
+		provinces = readProvinces(readAllProvinces());
+		assignStartingProvinces();
+
 	}
 	
+	private void assignStartingProvinces() {
+		List<String> startingProvinceNames = readStartingProvinces();
+		for (Province province: provinces) {
+			if (startingProvinceNames.contains(province.getName()))
+				ownedProvinces.add(province);
+		}
+	}
+
 	private void readTechnologies() {
 		List<String> technologyNames = readStartingTechnologies();
 		for (String technologyName: technologyNames) {
@@ -107,11 +119,12 @@ public class Empire implements Serializable {
 		manpower = jsonObject.getInt("Manpower");
 	}
 	
-	private void readProvinces() {
-		List<String> provinceNames = readStartingProvinces();
+	private List<Province> readProvinces(List<String> provinceNames) {
+		List<Province> provinces = new ArrayList<Province>();
 		for (String provinceName: provinceNames) {
-			readProvince(provinceName);
+			provinces.add(readProvince(provinceName));
 		}
+		return provinces;
 	}
 
 	private List<String> readStartingProvinces() {
@@ -123,13 +136,35 @@ public class Empire implements Serializable {
 		}
 		return provinceNames;
 	}
+	
+	private List<String> readAllProvinces() {
+		List<String> provinceNames = new ArrayList<String>();
+		JSONObject jsonObject = getJSONObject("/provinces/Province List.json"); 
+		JSONArray names = jsonObject.getJSONArray("Province List");
+		for (Object name: names) {
+			provinceNames.add((String) name);
+		}
+		return provinceNames;
+	}
 
-	public void readProvince(String provinceName) {
+	public Province readProvince(String provinceName) {
 		JSONObject provinceObject = getJSONObject("/provinces/" + provinceName + ".json"); 
 		String name = provinceObject.getString("Name");
 		int goldIncome = provinceObject.getInt("Gold Income");
 		int manpowerIncome = provinceObject.getInt("Manpower Income");
-		provinces.add(new Province(name, goldIncome, manpowerIncome));
+		String owner = "";
+		JSONObject jsonCoordinates = (JSONObject) provinceObject.get("Coordinates");
+		Coordinates coordinates = new Coordinates(jsonCoordinates.getInt("y"), jsonCoordinates.getInt("x"));
+		JSONArray jsonArea = (JSONArray) provinceObject.get("Area");
+		int[][] area = new int[jsonArea.length()][((JSONArray)jsonArea.get(0)).length()];
+
+		for (int i = 0; i < jsonArea.length(); i++) {
+			JSONArray jsonArr = (JSONArray) jsonArea.get(i);
+			for (int j = 0; j < jsonArr.length(); j++) {
+				area[i][j] = jsonArr.getInt(j);
+			}
+		}
+		return new Province(name, goldIncome, manpowerIncome, owner, coordinates, area);
 	}
 
 	private List<BuildingFactory> buildBuildingFactories(JSONArray buildings) {
@@ -347,21 +382,45 @@ public class Empire implements Serializable {
 	public void incrementTime() {
 		time++;
 		if (time%INCOME_TIMER == 0) {
-			goldIncome();
-			manpowerIncome();
+			applyGoldIncome();
+			applyManpowerIncome();
 		}
 	}
-
-	private void manpowerIncome() {
-		for (Province province: provinces) {
-			manpower += province.getManpowerIncome();
+	
+	public int getManpowerIncome() {
+		int manpowerIncome = 0;
+		for (Province province: ownedProvinces) {
+			manpowerIncome += province.getManpowerIncome();
 		}
+		return manpowerIncome;
+	}
+	
+	public int getGoldIncome() {
+		int goldIncome = 0;
+		for (Province province: ownedProvinces) {
+			goldIncome += province.getGoldIncome();
+		}	
+		return goldIncome;
 	}
 
-	private void goldIncome() {
+	private void applyManpowerIncome() {
+		manpower += getManpowerIncome();
+	}
+
+	private void applyGoldIncome() {
+		party.addGold(getGoldIncome());
+	}
+
+	public List<Province> getAllProvinces() {
+		return provinces;
+	}
+
+	public Province getProvince(String provinceName) {
 		for (Province province: provinces) {
-			party.addGold(province.getGoldIncome());
+			if (province.getName().equals(provinceName))
+				return province;
 		}
+		return null;
 	}
 
 

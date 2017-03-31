@@ -21,8 +21,8 @@
 	},
 	"Equipment": {
 		"Sword" : "Bronze Lance",
-		"Armor" : "Bronze Breastplate",
-		"Helm" : "Bronze Helm"
+		"Helm" : "Bronze Helm",
+		"Armor" : "Bronze Breastplate"
 	},
 	"Abilities": [
 		{ 

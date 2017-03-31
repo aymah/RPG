@@ -7,6 +7,7 @@ public class EmpirePanelManager extends ExplorePanelManager {
 	private EmpireMap empireMap;
 	private EmpireInfoPanel infoPanel;
 	private ExploreMenuPanel menuPanel;
+	private ProvinceMenuPanel provinceMenuPanel;
 	private SimVictoryRewardsPanel simVictoryPanel;
 	
 	public EmpirePanelManager(GameFrame frame) {
@@ -35,6 +36,14 @@ public class EmpirePanelManager extends ExplorePanelManager {
 	
 	public ExploreMenuPanel getMenuPanel() {
 		return menuPanel;
+	}
+	
+	public void setProvinceMenuPanel(ProvinceMenuPanel menuPanel) {
+		provinceMenuPanel = menuPanel;
+	}
+	
+	public ProvinceMenuPanel getProvinceMenuPanel() {
+		return provinceMenuPanel;
 	}
 	
 	public void restore() {

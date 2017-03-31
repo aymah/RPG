@@ -12,6 +12,7 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import javax.imageio.ImageIO;
@@ -23,9 +24,12 @@ import unit.Party;
 import unit.Unit;
 import event.Corridor;
 import event.Encounter;
+import event.EnterBase;
+import event.EnterProvince;
 import event.Event;
 import event.MapEventManager;
 import event.MapEvent;
+import event.Province;
 import event.SimEncounter;
 
 public class EmpireMap extends GenericMap {
@@ -34,8 +38,11 @@ public class EmpireMap extends GenericMap {
 		private transient BufferedImage avatarStandingImage;
 		private transient BufferedImage avatarImage;
 		private transient BufferedImage avatarMoveAnimationImages;
+		private Party party;
 		private int y;
 		private int x;
+		private int targetingIndexY;
+		private int targetingIndexX;
 		
 		public EmpireMap(String name, GameFrame frame, EmpirePanelManager manager, Party party) {
 			frame.add(this);
@@ -46,8 +53,11 @@ public class EmpireMap extends GenericMap {
 			this.name = name;
 			this.frame = frame;
 			this.manager = manager;
+			this.party = party;
 			this.y = 0;
 			this.x = 0;
+			this.targetingIndexY = 0;
+			this.targetingIndexX = 0;
 			try {
 				avatarStandingImage = ImageIO.read(getClass().getResourceAsStream("/testUnits/sprites/testRenal.gif"));
 				avatarImage = avatarStandingImage;
@@ -82,20 +92,125 @@ public class EmpireMap extends GenericMap {
 	        Color bgColor = new Color(0,0,0);
 	        g2d.setColor(bgColor);
 	        g2d.fillRect(0, 0, GraphicsConstants.REGION_MAP_WIDTH, GraphicsConstants.REGION_MAP_HEIGHT);
-	        this.drawMap(g2d, party.getAvatarIndexX(), party.getAvatarIndexY(), GraphicsConstants.REGION_CENTER_X, GraphicsConstants.REGION_CENTER_Y,
+	        this.drawMap(g2d, targetingIndexX, targetingIndexY, GraphicsConstants.REGION_CENTER_X, GraphicsConstants.REGION_CENTER_Y,
 	        			 GraphicsConstants.REGION_MAP_HEIGHT, GraphicsConstants.REGION_MAP_WIDTH, x, y);
+	        drawProvinceBorders(g2d);
 	        drawAvatar(g2d);
+	        drawTarget(g2d);
 	    }
 		
 	    public void drawAvatar(Graphics2D g2d) {
 //	        Color c = new Color(0, 255, 0);
 //	        g2d.setColor(c);
 //	        g2d.fillOval(GraphicsConstants.REGION_CENTER_X, GraphicsConstants.REGION_CENTER_Y, GraphicsConstants.REGION_TILE_SIZE, GraphicsConstants.REGION_TILE_SIZE);
-	    	int offsetX = (GraphicsConstants.REGION_TILE_SIZE - avatarImage.getWidth(null) * GraphicsConstants.TILE_SIZE_SELECTED)/2;
-	    	int offsetY = (GraphicsConstants.REGION_TILE_SIZE - avatarImage.getHeight(null) * GraphicsConstants.TILE_SIZE_SELECTED)/2;
-	    	g2d.drawImage(avatarImage, GraphicsConstants.REGION_CENTER_X + offsetX, GraphicsConstants.REGION_CENTER_Y + offsetY, avatarImage.getWidth(null)*GraphicsConstants.TILE_SIZE_SELECTED, avatarImage.getHeight(null)*GraphicsConstants.TILE_SIZE_SELECTED, null);
+	    	int offsetX = (GraphicsConstants.REGION_TILE_SIZE - avatarImage.getWidth(null) * GraphicsConstants.TILE_SIZE_SELECTED)/2 + GraphicsConstants.REGION_CENTER_X;
+	    	int offsetY = (GraphicsConstants.REGION_TILE_SIZE - avatarImage.getHeight(null) * GraphicsConstants.TILE_SIZE_SELECTED)/2 + GraphicsConstants.REGION_CENTER_Y;
+	    	g2d.drawImage(avatarImage, (party.getAvatarIndexX() - targetingIndexX) * GraphicsConstants.REGION_TILE_SIZE + offsetX, (party.getAvatarIndexY() - targetingIndexY) * GraphicsConstants.REGION_TILE_SIZE + offsetY, avatarImage.getWidth(null)*GraphicsConstants.TILE_SIZE_SELECTED, avatarImage.getHeight(null)*GraphicsConstants.TILE_SIZE_SELECTED, null);
 	    }
 	    
+	    private void drawTarget(Graphics2D g2d) {
+	        g2d.setColor(new Color(255, 255, 0));
+	        GraphicsConstants.drawRect(g2d, GraphicsConstants.REGION_CENTER_X, 
+	        		 GraphicsConstants.REGION_CENTER_Y, 
+	        		 GraphicsConstants.REGION_TILE_SIZE, 
+	        		 GraphicsConstants.REGION_TILE_SIZE, 4);
+	    }
+	    
+	    private void drawProvinceBorders(Graphics2D g2d) {
+	    	List<Province> provinces = party.getEmpire().getAllProvinces();
+	    	Province selectedProvince = null;
+	    	for (Province province: provinces) {
+	    		Tile tile = tileMap.getTile(targetingIndexY, targetingIndexX);
+	    		if ((tile.hasEvent() && tile.getEvent().getCurrentEvent().getClass().equals(EnterProvince.class) && ((EnterProvince)tile.getEvent().getCurrentEvent()).getProvince().getName().equals(province.getName())) ||
+	    			(tile.hasEvent() && tile.getEvent().getCurrentEvent().getClass().equals(EnterBase.class) && ((EnterBase)tile.getEvent().getCurrentEvent()).getProvince().getName().equals(province.getName()))) {
+	    			selectedProvince = province;
+	    		} else {
+	    			g2d.setColor(new Color(0, 0, 0));
+	    			drawProvinceBorder(g2d, province);
+	    		}
+	    		
+//	    					//check above
+//	    					if (y == 0 || !province.isInArea(y - 1, x)) {
+//	    						g2d.drawRect(((x + provOffsetX) * GraphicsConstants.REGION_TILE_SIZE) + offsetX, 
+//	    									 ((y + provOffsetY) * GraphicsConstants.REGION_TILE_SIZE) + offsetY , 
+//	    									 GraphicsConstants.REGION_TILE_SIZE, 
+//	    									 1);
+//	    					}
+//	    					//check below
+//	    					if (y == province.getHeight() - 1 || !province.isInArea(y + 1, x)) {
+//	    						g2d.drawRect(((x + provOffsetX) * GraphicsConstants.REGION_TILE_SIZE) + offsetX, 
+//	    									 ((y + provOffsetY + 1) * GraphicsConstants.REGION_TILE_SIZE) + offsetY - 2, 
+//	    									 GraphicsConstants.REGION_TILE_SIZE, 
+//	    									 1);
+//	    					}
+//	    					//check left
+//	    					if (x == 0 || !province.isInArea(y, x - 1)) {
+//	    						g2d.drawRect(((x + provOffsetX) * GraphicsConstants.REGION_TILE_SIZE) + offsetX, 
+//	    								     ((y + provOffsetY) * GraphicsConstants.REGION_TILE_SIZE) + offsetY, 
+//	    								     1, 
+//	    								     GraphicsConstants.REGION_TILE_SIZE);
+//	    					}
+//	    					//check right
+//	    					if (x == province.getWidth() -1 || !province.isInArea(y, x + 1)) {
+//	    						g2d.drawRect(((x + provOffsetX + 1) * GraphicsConstants.REGION_TILE_SIZE) + offsetX - 2, 
+//	    								     ((y + provOffsetY) * GraphicsConstants.REGION_TILE_SIZE) + offsetY, 
+//	    								     1, 
+//	    								     GraphicsConstants.REGION_TILE_SIZE);
+//	    					}
+
+	    		//double for loop through all the area of each province
+	    			//if the square is in the province
+	    				//check each side of the square
+	    					//if the side of the square is not in the province, draw a border
+	    		
+	    	}
+	    	if (selectedProvince != null) {
+		    	g2d.setColor(new Color(255, 0, 0));
+    			drawProvinceBorder(g2d, selectedProvince);
+	    	}
+	    }
+	    
+		private void drawProvinceBorder(Graphics2D g2d, Province province) {
+			int provOffsetX = province.getX() - province.getCenter().getX() - targetingIndexX;
+    		int provOffsetY = province.getY() - province.getCenter().getY() - targetingIndexY;
+	    	int offsetX = this.x + GraphicsConstants.REGION_CENTER_X;
+	    	int offsetY = this.y + GraphicsConstants.REGION_CENTER_Y;
+    		for (int y = 0; y < province.getHeight(); y++) {
+    			for (int x = 0; x < province.getWidth(); x++) {
+    				if (province.isInArea(y, x)) {
+    					//check above
+    					if (y == 0 || !province.isInArea(y - 1, x)) {
+    						g2d.drawLine(((x + provOffsetX) * GraphicsConstants.REGION_TILE_SIZE) + offsetX, 
+    									 ((y + provOffsetY) * GraphicsConstants.REGION_TILE_SIZE) + offsetY , 
+    									 ((x + provOffsetX + 1) * GraphicsConstants.REGION_TILE_SIZE) + offsetX, 
+    									 ((y + provOffsetY) * GraphicsConstants.REGION_TILE_SIZE) + offsetY);
+    					}
+    					//check below
+    					if (y == province.getHeight() - 1 || !province.isInArea(y + 1, x)) {
+    						g2d.drawLine(((x + provOffsetX) * GraphicsConstants.REGION_TILE_SIZE) + offsetX, 
+    									 ((y + provOffsetY + 1) * GraphicsConstants.REGION_TILE_SIZE) + offsetY, 
+    									 ((x + provOffsetX + 1) * GraphicsConstants.REGION_TILE_SIZE) + offsetX, 
+    									 ((y + provOffsetY + 1) * GraphicsConstants.REGION_TILE_SIZE) + offsetY);
+    					}
+    					//check left
+    					if (x == 0 || !province.isInArea(y, x - 1)) {
+    						g2d.drawLine(((x + provOffsetX) * GraphicsConstants.REGION_TILE_SIZE) + offsetX, 
+    								     ((y + provOffsetY) * GraphicsConstants.REGION_TILE_SIZE) + offsetY, 
+    								     ((x + provOffsetX) * GraphicsConstants.REGION_TILE_SIZE) + offsetX, 
+    								     ((y + provOffsetY + 1) * GraphicsConstants.REGION_TILE_SIZE) + offsetY);
+    					}
+    					//check right
+    					if (x == province.getWidth() -1 || !province.isInArea(y, x + 1)) {
+    						g2d.drawLine(((x + provOffsetX + 1) * GraphicsConstants.REGION_TILE_SIZE) + offsetX, 
+    								     ((y + provOffsetY) * GraphicsConstants.REGION_TILE_SIZE) + offsetY, 
+    								     ((x + provOffsetX + 1) * GraphicsConstants.REGION_TILE_SIZE) + offsetX, 
+    								     ((y + provOffsetY + 1) * GraphicsConstants.REGION_TILE_SIZE) + offsetY);
+    					}		
+    				}
+    			}
+    		}
+		}
+
 		public void keyTyped(KeyEvent e) {
 			// TODO Auto-generated method stub
 			
@@ -135,13 +250,13 @@ public class EmpireMap extends GenericMap {
 					openMenu("Standard");
 					break;
 			}
-			if (moved) {
-				((EmpireMap) manager.getMap()).getParty().getEmpire().incrementTime();
-				walkingAnimation(direction);
-				walkingEvents();
-			} else if (!direction.equals("")) { //if move command but couldnt move
-				avatarImage = avatarStandingImage;
-			}
+//			if (moved) {
+//				((EmpireMap) manager.getMap()).getParty().getEmpire().incrementTime();
+//				walkingAnimation(direction);
+//				walkingEvents();
+//			} else if (!direction.equals("")) { //if move command but couldnt move
+//				avatarImage = avatarStandingImage;
+//			}
 			checkTileTest();
 			this.repaint();
 		}
@@ -202,36 +317,60 @@ public class EmpireMap extends GenericMap {
 		}
 
 		private boolean moveUp() {
-			if (party.getAvatarIndexY() - 1 >= 0 && tileMap.getTile(party.getAvatarIndexY() - 1, party.getAvatarIndexX()).isAccessable()) {
-				party.setAvatarIndexY(party.getAvatarIndexY() - 1);
-				y -= GraphicsConstants.REGION_TILE_SIZE;
+//			if (party.getAvatarIndexY() - 1 >= 0 && tileMap.getTile(party.getAvatarIndexY() - 1, party.getAvatarIndexX()).isAccessable()) {
+//				party.setAvatarIndexY(party.getAvatarIndexY() - 1);
+//				y -= GraphicsConstants.REGION_TILE_SIZE;
+//				return true;
+//			}
+//			return false;
+			if (targetingIndexY - 1 >= 0) {
+				targetingIndexY -= 1;
+//				y -= GraphicsConstants.REGION_TILE_SIZE;
 				return true;
 			}
 			return false;
 		}
 		
 		private boolean moveDown() {
-			if (party.getAvatarIndexY() + 1 < height && tileMap.getTile(party.getAvatarIndexY() + 1, party.getAvatarIndexX()).isAccessable()) {
-				party.setAvatarIndexY(party.getAvatarIndexY() + 1);
-				y += GraphicsConstants.REGION_TILE_SIZE;
+//			if (party.getAvatarIndexY() + 1 < height && tileMap.getTile(party.getAvatarIndexY() + 1, party.getAvatarIndexX()).isAccessable()) {
+//				party.setAvatarIndexY(party.getAvatarIndexY() + 1);
+//				y += GraphicsConstants.REGION_TILE_SIZE;
+//				return true;
+//			}
+//			return false;
+			if (targetingIndexY + 1 < height) {
+				targetingIndexY += 1;
+//				y += GraphicsConstants.REGION_TILE_SIZE;
 				return true;
 			}
 			return false;
 		}
 		
 		private boolean moveLeft() {
-			if (party.getAvatarIndexX() - 1 >= 0 && tileMap.getTile(party.getAvatarIndexY(), party.getAvatarIndexX() - 1).isAccessable()) {
-				party.setAvatarIndexX(party.getAvatarIndexX() - 1);
-				x -= GraphicsConstants.REGION_TILE_SIZE;
+//			if (party.getAvatarIndexX() - 1 >= 0 && tileMap.getTile(party.getAvatarIndexY(), party.getAvatarIndexX() - 1).isAccessable()) {
+//				party.setAvatarIndexX(party.getAvatarIndexX() - 1);
+//				x -= GraphicsConstants.REGION_TILE_SIZE;
+//				return true;
+//			}
+//			return false;
+			if (targetingIndexX - 1 >= 0) {
+				targetingIndexX -= 1;
+//				x -= GraphicsConstants.REGION_TILE_SIZE;
 				return true;
 			}
 			return false;
 		}
 		
 		private boolean moveRight() {
-			if (party.getAvatarIndexX() + 1 < width && tileMap.getTile(party.getAvatarIndexY(), party.getAvatarIndexX() + 1).isAccessable()) {
-				party.setAvatarIndexX(party.getAvatarIndexX() + 1);
-				x += GraphicsConstants.REGION_TILE_SIZE;
+//			if (party.getAvatarIndexX() + 1 < width && tileMap.getTile(party.getAvatarIndexY(), party.getAvatarIndexX() + 1).isAccessable()) {
+//				party.setAvatarIndexX(party.getAvatarIndexX() + 1);
+//				x += GraphicsConstants.REGION_TILE_SIZE;
+//				return true;
+//			}
+//			return false;
+			if (targetingIndexX + 1 < width) {
+				targetingIndexX += 1;
+//				x += GraphicsConstants.REGION_TILE_SIZE;
 				return true;
 			}
 			return false;
@@ -247,7 +386,7 @@ public class EmpireMap extends GenericMap {
 		}
 		
 		private void activateEvent() {
-			Tile tile = tileMap.getTile(party.getAvatarIndexY(), party.getAvatarIndexX());
+			Tile tile = tileMap.getTile(targetingIndexY, targetingIndexX);
 			if (tile.hasEvent()) {
 				MapEventManager event = tile.getEvent();
 				if (((MapEvent) event.getCurrentEvent()).getActivationMethod().equals("ACTIVATION"))
@@ -305,13 +444,16 @@ public class EmpireMap extends GenericMap {
 			
 		}
 		
-		public void setCoordinates (int avatarIndexY, int avatarIndexX) {
+		public void setCoordinates(int avatarIndexY, int avatarIndexX) {
 			party.setAvatarIndexY(avatarIndexY);
 			party.setAvatarIndexX(avatarIndexX);
+			this.targetingIndexX = avatarIndexX;
+			this.targetingIndexY = avatarIndexY;
 		}
 		
 		private void checkTileTest() {
-			Tile tile = tileMap.getTile(party.getAvatarIndexY(), party.getAvatarIndexX());
+			EmpireInfoPanel infoPanel = manager.getInfoPanel();
+			Tile tile = tileMap.getTile(targetingIndexY, targetingIndexX);
 			String text = "";
 			if (tile.hasEvent()) {
 				MapEventManager event = tile.getEvent();
@@ -319,13 +461,20 @@ public class EmpireMap extends GenericMap {
 					text = ((SimEncounter)event.getCurrentEvent()).getDestination();
 				else
 					text = event.getClass().toString();
+				if (event.getCurrentEvent().getClass().equals(EnterProvince.class)) {
+					infoPanel.displayProvinceInfo(((EnterProvince)event.getCurrentEvent()).getProvince());
+				} else {
+					infoPanel.clearProvince();
+				}
+			} else {
+				infoPanel.clearProvince();
 			}
-			EmpireInfoPanel infoPanel = manager.getInfoPanel();
 			infoPanel.displayText(text);
+			
 		}
 		
 		private void walkingEvents() {
-			Tile tile = tileMap.getTile(party.getAvatarIndexY(), party.getAvatarIndexX());
+			Tile tile = tileMap.getTile(targetingIndexY, targetingIndexX);
 			if (tile.hasEvent()) {
 				MapEventManager event = tile.getEvent();
 				if (((MapEvent) event.getCurrentEvent()).getActivationMethod().equals("WALKING")) {
@@ -375,6 +524,13 @@ public class EmpireMap extends GenericMap {
 			}
 			BufferedImage image = avatarMoveAnimationImages.getSubimage(x * 32, y * 32, 32, 32);
 			return image;
+		}
+
+		public void openProvinceMenu(Province province) {
+			ProvinceMenuPanel menuPanel = manager.getProvinceMenuPanel();
+			menuPanel.setProvince(province);
+			menuPanel.displayPanel();
+			manager.changeDominantPanel(menuPanel);
 		}
 	}
 

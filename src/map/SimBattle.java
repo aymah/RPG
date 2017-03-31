@@ -93,6 +93,7 @@ public class SimBattle {
 	}
 	
 	private void simulateBattle() {
+		List<String> battleLog = new ArrayList<String>();
 		List<Unit> unitList = new ArrayList<Unit>();
 		unitList.addAll(party.getUnitList());
 		unitList.addAll(this.unitList);
@@ -155,6 +156,7 @@ public class SimBattle {
 						bestTarget.setMeeleSpace(true);
 					}
 				}
+				battleLog.add("attack! " + unit.getName() + " attacks " + bestTarget.getName() + " with " + bestAbility.getName() + " for " + bestDamage + ". Remaining HP: " + bestTarget.getCurrHP() + " Remaining Armor: " + bestTarget.getTotalAbsorption() + " Ally Meele Space " + allyMeeleSpace + " Enemy Meele Space " + enemyMeeleSpace);
 				System.out.println("attack! " + unit.getName() + " attacks " + bestTarget.getName() + " with " + bestAbility.getName() + " for " + bestDamage + ". Remaining HP: " + bestTarget.getCurrHP() + " Remaining Armor: " + bestTarget.getTotalAbsorption() + " Ally Meele Space " + allyMeeleSpace + " Enemy Meele Space " + enemyMeeleSpace);
 				if (bestTarget.isDying()) {
 					orderOfBattle.removeUnit(bestTarget);
@@ -162,10 +164,12 @@ public class SimBattle {
 						allyMeeleSpace--;
 					else
 						enemyMeeleSpace--;
+					battleLog.add("Unit Killed! " + bestTarget.getName());
 					System.out.println("Unit Killed! " + bestTarget.getName());
 					bestTarget.setDying(false);
 				}
 			} else {
+				battleLog.add("attack! " + unit.getName() + " could not find a target to attack.");
 				System.out.println("attack! " + unit.getName() + " could not find a target to attack.");
 			}
 			//find target with highest damage
@@ -179,7 +183,7 @@ public class SimBattle {
 		party.restoreArmor();
 		if (orderOfBattle.lastFactionStanding().equals("ALLY")) {
 			System.out.println("Victory!");
-			winBattle();
+			winBattle(battleLog);
 		} else {
 			System.out.println("Defeat!");
 			loseBattle();
@@ -209,8 +213,9 @@ public class SimBattle {
 //	}
 
 
-	private void winBattle() {
+	private void winBattle(List<String> battleLog) {
 		SimVictoryRewardsPanel menuPanel = manager.getSimVictoryPanel();
+		menuPanel.setBattleLog(battleLog);
 		menuPanel.displayPanel();
 		menuPanel.setExpReward(expReward);
 		menuPanel.setGoldReward(goldReward);

@@ -26,6 +26,11 @@ public class GraphicsConstants {
 	public static final int REGION_CENTER_Y = (REGION_MAP_HEIGHT - REGION_TILE_SIZE)/2;
 	public static final int REGION_CENTER_X = (REGION_MAP_WIDTH - REGION_TILE_SIZE)/2;
 	
+	public static final int PROVINCE_MENU_HEIGHT = (REGION_MAP_HEIGHT * 2)/3;
+	public static final int PROVINCE_MENU_WIDTH = (REGION_MAP_WIDTH * 2)/3;
+	public static final int PROVINCE_MENU_Y = REGION_MAP_HEIGHT/6;
+	public static final int PROVINCE_MENU_X = REGION_MAP_WIDTH/6;
+	
 	public static final int INFO_PANEL_HEIGHT = FRAME_HEIGHT - REGION_MAP_HEIGHT;
 	public static final int INFO_PANEL_WIDTH = FRAME_WIDTH;
 	

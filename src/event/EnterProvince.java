@@ -4,11 +4,11 @@ import map.EmpireMap;
 import map.GamePanel;
 import map.RegionMap;
 
-public class EnterBase extends MapEvent {
+public class EnterProvince extends MapEvent {
 
 	Province province;
 	
-	public EnterBase(String activationMethod, Switch s, Province province) {
+	public EnterProvince(String activationMethod, Switch s, Province province) {
 		super(activationMethod, s);
 		this.province = province;
 	}
@@ -16,12 +16,10 @@ public class EnterBase extends MapEvent {
 	@Override
 	public void execute(GamePanel panel) {
 		EmpireMap map = (EmpireMap) panel;
-		map.getParty().healUnits();
-		map.openMenu("Base");
+		map.openProvinceMenu(province);
 	}
 	
 	public Province getProvince() {
 		return province;
 	}
-
 }
