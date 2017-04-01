@@ -39,10 +39,13 @@ public class StartMapEditor {
         EditorPanelManager manager = new EditorPanelManager(frame);
 	    frame.setLayout(new BorderLayout());
 	    
-	    JScrollPane mapPanel = new JScrollPane();
+	    JScrollPane mapPanel = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 	    mapPanel.setLayout(null);
-	    mapPanel.setPreferredSize(new Dimension(EditorConstants.MAP_WIDTH, EditorConstants.MAP_HEIGHT));
+//	    mapPanel.setPreferredSize(new Dimension(EditorConstants.MAP_WIDTH, EditorConstants.MAP_HEIGHT));
 //	    mapPanel.setBounds(0, 0, EditorConstants.MAP_WIDTH, EditorConstants.MAP_HEIGHT);
+	    
+	    mapPanel.setPreferredSize(new Dimension(350, 350));
+	    mapPanel.setBounds(50, 50, 400, 400);
 	    
 	    JMenuBar menuBar = new JMenuBar();
 	    JMenu menu = new JMenu("File");
@@ -60,6 +63,7 @@ public class StartMapEditor {
 	    		if (returnValue == JFileChooser.APPROVE_OPTION) {
 	    			File selectedFile = fileChooser.getSelectedFile();
 	    		    frame.removeAll();
+	    		    frame.add(mapPanel, BorderLayout.WEST);
 	    		    EditorMap map = new EditorMap(selectedFile.getName().substring(0, selectedFile.getName().length() - 4), frame, manager, mapPanel);
 	    		    manager.setDominantPanel(map);
 	    		}
@@ -78,6 +82,7 @@ public class StartMapEditor {
 	    		if (returnValue == JFileChooser.APPROVE_OPTION) {
 	    			File selectedFile = fileChooser.getSelectedFile();
 	    		    frame.removeAll();
+	    		    frame.add(mapPanel, BorderLayout.WEST);
 	    		    EditorMap map = new EditorMap(selectedFile.getName().substring(0, selectedFile.getName().length() - 4), frame, manager, mapPanel);
 	    		    manager.setDominantPanel(map);
 	    		}
@@ -99,8 +104,8 @@ public class StartMapEditor {
 //	    	}
 //	    });
 	    
-	    mapPanel.setBackground(new Color(0,0,0));
-	    frame.add(mapPanel, BorderLayout.CENTER);
+//	    mapPanel.setBackground(new Color(0,0,0));
+//	    frame.add(mapPanel, BorderLayout.CENTER);
 	    frame.add(menuBar, BorderLayout.NORTH);
 //	    f.add(menuBar);
 //	    f.add(button);
@@ -116,7 +121,9 @@ public class StartMapEditor {
 	
     public void setup(JFrame f) {
         f.add(frame);
-        f.setSize(EditorConstants.FRAME_WIDTH + 10, EditorConstants.FRAME_HEIGHT + 32);
+//        f.setSize(EditorConstants.FRAME_WIDTH + 10, EditorConstants.FRAME_HEIGHT + 32);
+        f.setSize(400 + 10, 400 + 32);
+
         f.setVisible(true);
         frame.setVisible(true);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -23,13 +23,14 @@ public class EditorMap extends GenericMap {
 	
 	public EditorMap(String mapName, GameFrame frame, EditorPanelManager manager, JScrollPane mapPanel) {
 		this.mapPanel = mapPanel;
-		this.mapPanel.add(this);
+//		this.mapPanel.add(this);
+		this.mapPanel.setViewportView(this);
 //		frame.add(this);
 		Party party = new Party(); //this actually doesnt do anything, you can ignore it
 		loadMap(mapName, party); //loads the map from file, pretty self explanatory
 		this.manager = manager;
-//		this.setBounds(0, 0, EditorConstants.FRAME_WIDTH, EditorConstants.FRAME_HEIGHT);
-		this.name = name;
+		this.setBounds(0, 0, 800, 800);
+		this.name = mapName;
 		this.frame = frame;	
 	}
 	
@@ -37,8 +38,7 @@ public class EditorMap extends GenericMap {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-            RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         drawMap(g2d);
     }
 	
